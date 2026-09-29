@@ -120,11 +120,11 @@ renderItems();
 /* ---------- 附件下載 ---------- */
 const FILES = [
   ["01-program-rules.pdf", "附件1_數位教學創新應用補助專案.pdf", "附件 1　補助專案要點", "補助類別、補助項目與核銷的原則。"],
-  ["03-ta-insurance.odt", "附件3_工讀學生聘任投保資訊.odt", "附件 3　工讀學生聘任投保資訊", "TA 投保用。填 10–12 月各月工作日期與時數，外籍生附工作證。"],
+  ["03-ta-insurance.odt", "附件3_工讀學生聘任投保資訊.odt", "附件 3　工讀學生聘任投保資訊", "TA 投保用。填 10–12 月各月工作日期與時數（三個月合計 30 小時），外籍生附工作證。"],
   ["04-budget-change.odt", "附件4_經費變更申請表.odt", "附件 4　經費變更申請表", "經費項目需要調整時填寫。"],
   ["05-ra-agreement.odt", "附件5_研究獎助生合意書.odt", "附件 5　研究獎助生合意書", "RA 用。一式三份、學生與老師親簽，紙本送 101A。"],
   ["06-1-reimbursement-rules.odt", "附件6-1_核銷注意要點.odt", "附件 6-1　核銷注意要點", "可報項目、應附文件、憑證規格的完整規定。"],
-  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA 按月核銷、講員費等個人款項使用。"],
+  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA 按月核銷、講員費等個人款項使用。表單上印的是 196 元，RA 請自行改成 200 元。"],
   ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "每月一張。填好後可以先用「簽到單送出前檢查」檢查。"],
   ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
   ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
@@ -168,8 +168,24 @@ function renderCross() {
       if (sameId || sameName) clashes.push(`${esc(ra.sheet.name || ra.sheet.studentId)}（${esc(ra.fileName)} 與 ${esc(ta.fileName)}）`);
     }
   }
-  box.hidden = !clashes.length;
-  box.innerHTML = clashes.length ? `<b>同一人不能同時是 RA 和 TA：</b>${clashes.join("、")}。請確認這位學生的身分，只能保留其中一種。` : "";
+  const msgs = [];
+  if (clashes.length) msgs.push(`<b>同一人不能同時是 RA 和 TA：</b>${clashes.join("、")}。請確認這位學生的身分，只能保留其中一種。`);
+  // 同一人同身分的多張簽到單，加總後不能超過總時數（TA 30、RA 50）
+  const groups = new Map();
+  for (const s of ok) {
+    const who = key(s.sheet.studentId) || key(s.sheet.name);
+    if (!who) continue;
+    const k = `${s.role}|${who}`;
+    const hours = checkInnovation(s.sheet, s).calculated.totalHours;
+    const g = groups.get(k) ?? { role: s.role, name: s.sheet.name || s.sheet.studentId, hours: 0, count: 0 };
+    g.hours += hours; g.count += 1; groups.set(k, g);
+  }
+  for (const g of groups.values()) {
+    const cap = ROLES[g.role].totalHours;
+    if (g.count > 1 && g.hours > cap) msgs.push(`<b>${esc(g.name)}（${g.role}）超過總時數：</b>這 ${g.count} 張簽到單合計 ${Math.round(g.hours * 100) / 100} 小時，三個月總共只能 ${cap} 小時。`);
+  }
+  box.hidden = !msgs.length;
+  box.innerHTML = msgs.join("<br>");
 }
 
 function rowsLabel(ids) { return ids?.length ? `第 ${ids.join("、")} 列：` : ""; }

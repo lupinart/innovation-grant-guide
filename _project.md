@@ -4,5 +4,9 @@
 - 網址：https://lupinart.github.io/innovation-grant-guide/
 - Repo：lupinart/innovation-grant-guide
 - 用途：給受補助老師看的 RA/TA、核銷規則、簽到單檢查、附件下載
-- 規則來源：/Users/Lupin/Downloads/re 的附件＋承辦信件；RA 時薪 200、TA 196（Lupin 確認）
-- 待確認：TA 每月時數（附件1「30小時以下日保」vs 附件3/4「至少31小時」）；RA 是否投保；附件6-2 領據印的是 196 元
+- 規則來源：/Users/Lupin/Downloads/re 的附件＋承辦信件；以下為 Lupin 2026-09-29 確認：
+  - RA 時薪 200、TA 196；RA 與 TA 不可同一人；大學部可當 TA
+  - TA：10–12 月合計 30 小時，每月不超過 30，照老師當初填的分配
+  - RA：總共 50 小時，分三個月做完
+  - 附件6-2 領據印 196 元，RA 由老師自行改成 200 元
+- 待確認：RA 是否投保（附件沒寫，網頁未提）

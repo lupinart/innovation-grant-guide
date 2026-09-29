@@ -20,7 +20,6 @@ export const PROFILE = {
   allowedWorkContents: []
 };
 
-const MONTHLY_MIN_HOURS = 31;
 const ADMIN_WORDS = ["行政", "公文", "報帳", "核銷", "跑腿", "收發", "櫃台", "接電話"];
 
 function issue(code, severity, message, entryIds) {
@@ -40,8 +39,8 @@ function weekKey(iso) {
 }
 
 export const ROLES = {
-  TA: { label: "助教工讀生 TA", rate: 196 },
-  RA: { label: "研究助理 RA", rate: 200 }
+  TA: { label: "助教工讀生 TA", rate: 196, totalHours: 30 },
+  RA: { label: "研究助理 RA", rate: 200, totalHours: 50 }
 };
 
 export function checkInnovation(sheet, options = {}) {
@@ -95,8 +94,9 @@ export function checkInnovation(sheet, options = {}) {
   }
 
   const total = base.calculated.totalHours;
-  if (isTA && entries.length && total < MONTHLY_MIN_HOURS) {
-    extra.push(issue("MONTH_UNDER_MIN", "review", `本月合計 ${total} 小時，少於投保時要求的每月至少 ${MONTHLY_MIN_HOURS} 小時，請跟承辦確認。`));
+  const cap = ROLES[role].totalHours;
+  if (entries.length && total > cap) {
+    extra.push(issue("MONTH_OVER_CAP", "error", `本月合計 ${total} 小時，超過${isTA ? " TA 三個月總共的 30 小時（每月不能超過 30 小時）" : " RA 三個月總共的 50 小時"}。`));
   }
   if (isTA && options.plannedHours && entries.length && Math.abs(Number(options.plannedHours) - total) > 0.001) {
     extra.push(issue("PLAN_MISMATCH", "review", `跟投保資訊表填的本月 ${options.plannedHours} 小時不同（簽到單合計 ${total} 小時），請確認是否需要通知承辦調整。`));
