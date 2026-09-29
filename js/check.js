@@ -1,0 +1,118 @@
+// 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
+import { checkTimesheet } from "./rules.js";
+
+export const PROFILE = {
+  planName: "A82 發展雲端知識體系計畫",
+  planNumber: "115609782",
+  unit: "數位教育發展處數位課程發展組",
+  hourlyRate: 196,
+  allowedWeekdays: [],
+  earliestStart: "",
+  latestEnd: "",
+  blockedDates: [],
+  location: {
+    schoolOnly: true,
+    requireRoom: false,
+    requiredKeywords: [],
+    forbiddenKeywords: ["家裡", "家中", "住家", "宿舍", "咖啡", "麥當勞", "星巴克"],
+    sampleValues: ["(填校內)", "（填校內）"]
+  },
+  allowedWorkContents: []
+};
+
+const MONTHLY_MIN_HOURS = 31;
+const ADMIN_WORDS = ["行政", "公文", "報帳", "核銷", "跑腿", "收發", "櫃台", "接電話"];
+
+function issue(code, severity, message, entryIds) {
+  return { code, severity, message, ...(entryIds ? { entryIds } : {}) };
+}
+
+function minutes(value) {
+  const m = /^(\d{2}):(\d{2})$/.exec(value ?? "");
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+}
+
+function weekKey(iso) {
+  const d = new Date(`${iso}T00:00:00`);
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return `${monday.getMonth() + 1}/${monday.getDate()} 那一週`;
+}
+
+export const ROLES = {
+  TA: { label: "助教工讀生 TA", rate: 196 },
+  RA: { label: "研究助理 RA", rate: 200 }
+};
+
+export function checkInnovation(sheet, options = {}) {
+  const role = options.role === "RA" ? "RA" : "TA";
+  const isTA = role === "TA";
+  const rate = ROLES[role].rate;
+  const samples = sheet.entries.filter((e) => e.isSample);
+  const entries = sheet.entries.filter((e) => !e.isSample);
+  const base = checkTimesheet({ ...sheet, entries }, { ...PROFILE, hourlyRate: rate });
+  const issues = base.issues.filter((i) => !["LOCATION_CONFIRM", "WORK_CONTENT_CONFIRM"].includes(i.code));
+  for (const i of issues) {
+    if (i.code === "ENTRIES_UNREADABLE") i.message = "沒有讀到任何工作紀錄。請確認表格裡已填工作日期與起迄時間。";
+  }
+  const extra = [];
+
+  if (samples.length) {
+    extra.push(issue("SAMPLE_ROW", "error", "表單上的範例列（9/1、9:00–12:00）還在，請刪除或改成實際資料。", samples.map((e) => e.id)));
+  }
+  if (sheet.outsider) {
+    extra.push(issue("OUTSIDER", "error", "勾選了「校外人士」。外校生或已畢業的學生不能用本補助款支領工讀金。"));
+  }
+  if (!sheet.period.written) {
+    extra.push(issue("MONTH_MISSING", "error", "表頭「115年　月」的月份沒有填。"));
+  } else {
+    const other = entries.filter((e) => e.date && Number(e.date.slice(5, 7)) !== sheet.period.month);
+    if (other.length) extra.push(issue("MONTH_MISMATCH", "error", `有工作日期不在表頭的 ${sheet.period.month} 月。每個月要分開填一張簽到單。`, other.map((e) => e.id)));
+  }
+
+  for (const e of entries) {
+    const word = ADMIN_WORDS.find((w) => e.workContent.includes(w));
+    if (word) extra.push(issue("ADMIN_WORK", "error", `工作內容寫到「${word}」。工讀內容要跟教學、研究相關，不能做行政作業。`, [e.id]));
+  }
+
+  if (isTA && options.insuredFrom) {
+    const early = entries.filter((e) => e.date && e.date < options.insuredFrom);
+    if (early.length) extra.push(issue("BEFORE_INSURANCE", "error", `有工作日期早於保險生效日（${options.insuredFrom.slice(5).replace("-", "/")}）。保險生效前不能開始工作。`, early.map((e) => e.id)));
+  }
+
+  const foreign = sheet.foreign || options.foreign;
+  if (isTA && foreign) {
+    const weeks = new Map();
+    for (const e of entries) {
+      const s = minutes(e.start), t = minutes(e.end);
+      if (!e.date || s === null || t === null || t <= s) continue;
+      const k = weekKey(e.date);
+      weeks.set(k, [(weeks.get(k)?.[0] ?? 0) + (t - s), [...(weeks.get(k)?.[1] ?? []), e.id]]);
+    }
+    for (const [k, [m, ids]] of weeks) {
+      if (m > 20 * 60) extra.push(issue("FOREIGN_WEEKLY", "error", `外籍生每週最多 20 小時，${k}合計 ${Math.round(m / 6) / 10} 小時。`, ids));
+    }
+  }
+
+  const total = base.calculated.totalHours;
+  if (isTA && entries.length && total < MONTHLY_MIN_HOURS) {
+    extra.push(issue("MONTH_UNDER_MIN", "review", `本月合計 ${total} 小時，少於投保時要求的每月至少 ${MONTHLY_MIN_HOURS} 小時，請跟承辦確認。`));
+  }
+  if (isTA && options.plannedHours && entries.length && Math.abs(Number(options.plannedHours) - total) > 0.001) {
+    extra.push(issue("PLAN_MISMATCH", "review", `跟投保資訊表填的本月 ${options.plannedHours} 小時不同（簽到單合計 ${total} 小時），請確認是否需要通知承辦調整。`));
+  }
+
+  return {
+    role,
+    rate,
+    entries,
+    issues: [...extra, ...issues],
+    calculated: base.calculated,
+    declarations: [
+      isTA
+        ? { code: "NOT_RA", label: "這位學生沒有同時擔任本專案的研究助理（RA）。" }
+        : { code: "NOT_TA", label: "這位學生是碩博士生，已簽合意書，且沒有同時擔任本專案的助教工讀生（TA）。" },
+      ...base.declarations
+    ]
+  };
+}

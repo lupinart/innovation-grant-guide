@@ -1,0 +1,199 @@
+import { parseTimesheet } from "./parse.js";
+import { checkInnovation, ROLES } from "./check.js";
+
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+/* ---------- 分頁 ---------- */
+const VIEWS = ["home", "people", "items", "receipt", "submit", "check", "files"];
+function show() {
+  const h = location.hash.slice(1);
+  const v = VIEWS.includes(h) ? h : "home";
+  VIEWS.forEach((x) => { document.getElementById("v-" + x).hidden = x !== v; });
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll("[data-home]").forEach((b) => b.addEventListener("click", () => { location.hash = "home"; }));
+addEventListener("hashchange", show);
+show();
+
+/* ---------- 品項查詢 ---------- */
+const ITEMS = [
+  ["隨身碟、隨身硬碟", "ok", "電腦周邊，用途要寫跟課程的關係"],
+  ["外接硬碟", "ok", "電腦周邊"],
+  ["簡報筆、投影筆", "ok", "電腦周邊"],
+  ["錄音筆", "ok", "電腦周邊"],
+  ["行動電源、電腦充電器", "ok", "電腦周邊"],
+  ["線材、延長線", "ok", "電腦周邊"],
+  ["耳機、麥克風", "ok", "電腦周邊"],
+  ["手寫板、繪圖板", "ok", "電腦周邊"],
+  ["標籤機", "ok", "電腦周邊"],
+  ["滑鼠、鍵盤", "ok", "電腦周邊，要是教學用，行政用不行"],
+  ["攝影機、錄影器材", "ok", "單價 2,999 元以下"],
+  ["腳架、手機支架", "ok", "電腦周邊"],
+  ["記憶卡", "ok", "電腦周邊"],
+  ["筆、影印紙、迴紋針等文具", "ok", "教學相關才可以，不能私人用"],
+  ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學"],
+  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；收據上方要有老師姓名與 CYCU 信箱"],
+  ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用"],
+  ["印刷、影印、大圖輸出", "warn", "1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
+  ["海報、文宣、網站設計", "warn", "要附設計樣本"],
+  ["碳粉匣", "warn", "原則上買一個，這項不受 2,999 元限制"],
+  ["學生實作材料", "warn", "申請時要先編列預算；用途寫「學生實作-材料費」並附成品照片"],
+  ["活動餐費（便當）", "warn", "限演講活動、要跨用餐時間，每人最多 120 元；線上活動不行"],
+  ["講員費、演講費", "warn", "校內專任 1,000 元／時，兼任與校外 2,000 元／時；不另報交通費"],
+  ["郵資", "warn", "從嚴審查，要說明和課程的直接關係；寄領據不能報"],
+  ["校外參訪車資", "warn", "申請時就要寫好地點、日期、目的"],
+  ["活動平安保險", "warn", "保額上限 400 萬元，人數要和名冊一致"],
+  ["網路外接卡", "no", "屬一般教學基本設備，跟創新教學沒有直接關聯"],
+  ["電腦、筆電、平板", "no", "財產性物品"],
+  ["印表機", "no", "財產性物品"],
+  ["任何 3,000 元以上的東西", "no", "單價超過 2,999 元"],
+  ["書籍", "no", "不論單價都不能買"],
+  ["Wi-Fi 分享器", "no", "不論單價都不能買"],
+  ["清潔用品", "no", "不論單價都不能買"],
+  ["碎紙機", "no", "不能用這筆教育部補助款"],
+  ["電腦電池等行政用周邊", "no", "屬行政用途"],
+  ["送學生的禮物、獎品", "no", "不能買商品贈送學生；獎勵學生請用競賽獎助金"],
+  ["點心、零食、飲料", "no", "餐費不能報點心零食"],
+  ["餐券", "no", "獎補助不能核銷餐券"],
+  ["講員交通費", "no", "講員費、演講費、諮詢費、評審費都不另報交通費"],
+  ["百元等級的鉛筆、原子筆", "no", "會計室說明會已表示不得購買"]
+];
+const LABEL = { ok: "可以報", warn: "有條件", no: "不能報", error: "要修正", review: "請確認" };
+let filter = "all";
+const list = $("#item-list"), qi = $("#q-item");
+function renderItems() {
+  const q = qi.value.trim().toLowerCase();
+  const rows = ITEMS.filter(([n, s, r]) => (filter === "all" || s === filter) && (!q || (n + r).toLowerCase().includes(q)));
+  list.innerHTML = rows.length
+    ? rows.map(([n, s, r]) => `<div class="item"><span class="pill ${s}">${LABEL[s]}</span><div><div class="n">${n}</div><div class="r">${r}</div></div></div>`).join("")
+    : `<div class="empty">找不到「${esc(qi.value)}」。清單裡沒有的品項，請先來電或在 LINE 群組詢問。</div>`;
+}
+qi.addEventListener("input", renderItems);
+document.querySelectorAll(".chip").forEach((c) => c.addEventListener("click", () => {
+  filter = c.dataset.f;
+  document.querySelectorAll(".chip").forEach((x) => x.setAttribute("aria-pressed", x === c));
+  renderItems();
+}));
+renderItems();
+
+/* ---------- 附件下載 ---------- */
+const FILES = [
+  ["01-program-rules.pdf", "附件1_數位教學創新應用補助專案.pdf", "附件 1　補助專案要點", "補助類別、補助項目與核銷的原則。"],
+  ["03-ta-insurance.odt", "附件3_工讀學生聘任投保資訊.odt", "附件 3　工讀學生聘任投保資訊", "TA 投保用。填 10–12 月各月工作日期與時數，外籍生附工作證。"],
+  ["04-budget-change.odt", "附件4_經費變更申請表.odt", "附件 4　經費變更申請表", "經費項目需要調整時填寫。"],
+  ["05-ra-agreement.odt", "附件5_研究獎助生合意書.odt", "附件 5　研究獎助生合意書", "RA 用。一式三份、學生與老師親簽，紙本送 101A。"],
+  ["06-1-reimbursement-rules.odt", "附件6-1_核銷注意要點.odt", "附件 6-1　核銷注意要點", "可報項目、應附文件、憑證規格的完整規定。"],
+  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA 按月核銷、講員費等個人款項使用。"],
+  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "每月一張。填好後可以先用「簽到單送出前檢查」檢查。"],
+  ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
+  ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
+  ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
+  ["08-expense-detail.doc", "08_支出明細表.doc", "08　支出明細表", "每筆報帳都要附，教學用途說明至少 50 字。"]
+];
+$("#file-list").innerHTML = FILES.map(([path, name, title, desc]) => {
+  const ext = path.split(".").pop().toUpperCase();
+  return `<div class="file"><span class="t">${title}<span class="fmt">${ext}</span></span><span class="d">${desc}</span><a href="files/${path}" download="${name}">下載</a></div>`;
+}).join("");
+
+/* ---------- 簽到單檢查 ---------- */
+const sheets = []; // { id, fileName, sheet, role, insuredFrom, plannedHours, foreign, error }
+let seq = 0;
+
+async function addFiles(fileList) {
+  for (const file of fileList) {
+    const item = { id: ++seq, fileName: file.name, role: "TA", insuredFrom: "", plannedHours: "", foreign: false };
+    try {
+      item.sheet = await parseTimesheet(await file.arrayBuffer());
+      item.foreign = item.sheet.foreign;
+    } catch (err) {
+      item.error = err.message;
+    }
+    sheets.push(item);
+  }
+  renderSheets();
+}
+
+function key(v) { return String(v ?? "").replaceAll(/\s+/g, ""); }
+
+function renderCross() {
+  const box = $("#cross");
+  const ok = sheets.filter((s) => s.sheet);
+  const clashes = [];
+  for (const ra of ok.filter((s) => s.role === "RA")) {
+    for (const ta of ok.filter((s) => s.role === "TA")) {
+      const sameId = key(ra.sheet.studentId) && key(ra.sheet.studentId) === key(ta.sheet.studentId);
+      const sameName = key(ra.sheet.name) && key(ra.sheet.name) === key(ta.sheet.name);
+      if (sameId || sameName) clashes.push(`${esc(ra.sheet.name || ra.sheet.studentId)}（${esc(ra.fileName)} 與 ${esc(ta.fileName)}）`);
+    }
+  }
+  box.hidden = !clashes.length;
+  box.innerHTML = clashes.length ? `<b>同一人不能同時是 RA 和 TA：</b>${clashes.join("、")}。請確認這位學生的身分，只能保留其中一種。` : "";
+}
+
+function rowsLabel(ids) { return ids?.length ? `第 ${ids.join("、")} 列：` : ""; }
+
+function renderSheet(item) {
+  if (item.error) {
+    return `<div class="panel sheet"><div class="sheet-head"><h3>${esc(item.fileName)}</h3><button class="remove" data-remove="${item.id}">移除</button></div><div class="note"><b>無法檢查：</b>${esc(item.error)}</div></div>`;
+  }
+  const r = checkInnovation(item.sheet, item);
+  const errors = r.issues.filter((i) => i.severity === "error");
+  const reviews = r.issues.filter((i) => i.severity === "review");
+  const s = item.sheet;
+  const who = [s.name, s.studentId].filter(Boolean).map(esc).join("　") || "（姓名、學號未填）";
+  const ta = item.role === "TA";
+  return `<div class="panel sheet">
+    <div class="sheet-head">
+      <h3>${who}<span class="fmt">${esc(item.fileName)}</span></h3>
+      <button class="remove" data-remove="${item.id}">移除</button>
+    </div>
+    <div class="opts-row">
+      <span>這張是誰的簽到單？</span>
+      <span class="seg" role="group" aria-label="身分">
+        ${Object.entries(ROLES).map(([k, v]) => `<button data-role="${k}" data-id="${item.id}" aria-pressed="${item.role === k}">${v.label}（${v.rate} 元）</button>`).join("")}
+      </span>
+    </div>
+    ${ta ? `<div class="opts-row">
+      <label>保險生效日 <input type="date" id="ins-${item.id}" data-field="insuredFrom" data-id="${item.id}" value="${esc(item.insuredFrom)}"></label>
+      <label>投保資訊表填的本月時數 <input type="number" min="0" step="0.5" id="plan-${item.id}" data-field="plannedHours" data-id="${item.id}" value="${esc(item.plannedHours)}"></label>
+      <label><input type="checkbox" id="fr-${item.id}" data-field="foreign" data-id="${item.id}" ${item.foreign ? "checked" : ""}> 外籍生</label>
+    </div>` : ""}
+    <div class="stats">
+      <span>${s.period.written ? `${s.period.year - 1911} 年 ${s.period.month} 月` : "月份未填"}</span>
+      <span>工作紀錄 <b>${r.entries.length}</b> 筆</span>
+      <span>應為 <b>${r.calculated.totalHours}</b> 小時</span>
+      <span>應領 <b>${r.calculated.totalPay.toLocaleString()}</b> 元</span>
+    </div>
+    ${errors.length || reviews.length
+      ? `<ul class="issues">${[...errors, ...reviews].map((i) => `<li><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${rowsLabel(i.entryIds)}${esc(i.message)}</span></li>`).join("")}</ul>`
+      : `<div class="allgood">沒有發現需要修正的地方</div>`}
+    <div class="decl"><b>送出前請自己確認：</b>${r.declarations.map((d, n) => `<label><input type="checkbox" id="d-${item.id}-${n}"> ${esc(d.label)}</label>`).join("")}</div>
+  </div>`;
+}
+
+function renderSheets() {
+  $("#sheets").innerHTML = sheets.map(renderSheet).join("");
+  $("#check-empty").hidden = sheets.length > 0;
+  renderCross();
+}
+
+const find = (id) => sheets.find((s) => s.id === Number(id));
+$("#sheets").addEventListener("click", (e) => {
+  const role = e.target.closest("[data-role]");
+  if (role) { find(role.dataset.id).role = role.dataset.role; renderSheets(); return; }
+  const rm = e.target.closest("[data-remove]");
+  if (rm) { sheets.splice(sheets.indexOf(find(rm.dataset.remove)), 1); renderSheets(); }
+});
+$("#sheets").addEventListener("change", (e) => {
+  const el = e.target.closest("[data-field]");
+  if (!el) return;
+  find(el.dataset.id)[el.dataset.field] = el.type === "checkbox" ? el.checked : el.value;
+  renderSheets();
+});
+
+const input = $("#file-input"), drop = $("#drop");
+input.addEventListener("change", () => { addFiles([...input.files]); input.value = ""; });
+drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles([...e.dataTransfer.files]); });
