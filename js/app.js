@@ -131,10 +131,16 @@ const FILES = [
   ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
   ["08-expense-detail.doc", "08_支出明細表.doc", "08　支出明細表", "每筆報帳都要附，教學用途說明至少 50 字。"]
 ];
-$("#file-list").innerHTML = FILES.map(([path, name, title, desc]) => {
+const fileRow = ([path, name, title, desc]) => {
   const ext = path.split(".").pop().toUpperCase();
   return `<div class="file"><span class="t">${title}<span class="fmt">${ext}</span></span><span class="d">${desc}</span><a href="files/${path}" download="${name}">下載</a></div>`;
-}).join("");
+};
+$("#file-list").innerHTML = FILES.map(fileRow).join("");
+// 各頁的相關附件：data-files 用檔名開頭的編號（例如 "05 06-2"）
+document.querySelectorAll(".dl[data-files]").forEach((box) => {
+  const rows = box.dataset.files.split(" ").map((code) => FILES.find(([path]) => path.startsWith(code + "-"))).filter(Boolean);
+  box.innerHTML = `<span class="big">${box.dataset.title}</span><div class="files">${rows.map(fileRow).join("")}</div><a class="dl-all" href="#files">看全部附件 →</a>`;
+});
 
 /* ---------- 簽到單檢查 ---------- */
 const sheets = []; // { id, fileName, sheet, role, insuredFrom, plannedHours, foreign, error }
