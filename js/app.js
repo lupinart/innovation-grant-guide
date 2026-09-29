@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20260929x";
-import { checkInnovation, ROLES } from "./check.js?v=20260929x";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20260929x";
+import { parseTimesheet } from "./parse.js?v=20260929y";
+import { checkInnovation, ROLES } from "./check.js?v=20260929y";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20260929y";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -213,11 +213,15 @@ function renderCross() {
 }
 
 // 日保要在生效日前 7 天把投保資料送到數位處
-function insuranceDue(iso) {
-  if (!iso) return "投保資料要在保險生效日的前 7 天送到數位處。例如 10/8 生效，就要在 10/1 前送到。";
-  const d = new Date(`${iso}T00:00:00`);
+// 以簽到單上最早的工作日當保險生效日，往前推 7 天
+function insuranceDue(entries) {
+  const first = entries.map((e) => e.date).filter(Boolean).sort()[0];
+  if (!first) return "投保資料要在第一天工作的前 7 天送到數位處。例如 10/23 開始工作，就要在 10/16 以前送到。";
+  const d = new Date(`${first}T00:00:00`);
+  const md = (x) => `${x.getMonth() + 1}/${x.getDate()}`;
+  const start = md(d);
   d.setDate(d.getDate() - 7);
-  return `投保資料要在 <b>${d.getMonth() + 1}/${d.getDate()}</b> 以前送到數位處，才能在這天生效。`;
+  return `這張簽到單第一天工作是 <b>${start}</b>，投保資料要在 <b>${md(d)}</b> 以前送到數位處。`;
 }
 
 function rowsLabel(ids) { return ids?.length ? `第 ${ids.join("、")} 列：` : ""; }
@@ -246,8 +250,7 @@ function renderSheet(item) {
       </span>
     </div>
     ${ta ? `<div class="opts-row">
-      <label>保險生效日 <input type="date" id="ins-${item.id}" data-field="insuredFrom" data-id="${item.id}" value="${esc(item.insuredFrom)}"></label>
-      <span class="ins-due">${insuranceDue(item.insuredFrom)}</span>
+      <span class="ins-due">${insuranceDue(r.entries)}</span>
       <label>投保資訊表填的本月時數 <input type="number" min="0" step="0.5" id="plan-${item.id}" data-field="plannedHours" data-id="${item.id}" value="${esc(item.plannedHours)}"></label>
       <label><input type="checkbox" id="fr-${item.id}" data-field="foreign" data-id="${item.id}" ${item.foreign ? "checked" : ""}> 外籍生</label>
     </div>` : ""}
@@ -277,7 +280,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20260929x").then(() => loadScript("js/vendor/docx-preview.min.js?v=20260929x")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20260929y").then(() => loadScript("js/vendor/docx-preview.min.js?v=20260929y")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

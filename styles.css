@@ -264,4 +264,4 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 [data-annotation-number][data-active="true"]{outline:4px solid #1f5f7a!important;outline-offset:2px}
 .issues .num{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:0;background:#c0392b;color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
 .issues .num[data-sev="review"]{background:#f2c200;color:#1d2a33}
-.ins-due{flex-basis:100%;color:var(--muted);font-size:.88rem}
+.ins-due{flex-basis:100%;font-size:.92rem}
