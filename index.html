@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929i">
+<link rel="stylesheet" href="styles.css?v=20260929j">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -34,7 +34,7 @@
   <div class="remind">
     <span class="big">老師最常忘記的三件事</span>
     <ol class="remind-list">
-      <li><b>餐費一定要跟演講一起報</b>，沒有演講就不能報餐費</li>
+      <li><b>餐費一定要跟演講一起報</b>，而且演講要橫跨中午（例如包含 12:30），否則不能報餐費</li>
       <li><b>講員費最多合計 3 小時</b>（最多 2 次）</li>
       <li><b>信用卡付款要附刷卡明細</b>，外幣另附刷卡當天的匯率表</li>
     </ol>
@@ -123,8 +123,8 @@
   <div class="bind" role="note" aria-label="演講與餐費綁定">
     <div class="bind-box"><span class="eyebrow">演講活動</span><b>講員費</b><span>最多 2 次、合計 3 小時以內</span></div>
     <div class="bind-link"><span>必須一起</span></div>
-    <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元、要跨用餐時間</span></div>
-    <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>餐費只能跟演講活動一起報，不能單獨報；線上活動不提供餐點。</p>
+    <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元；演講時間要<b>橫跨中午</b>（例如包含 12:30）</span></div>
+    <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>演講時間也要橫跨中午（例如 11:00–13:00 包含 12:30），才能報餐費。餐費不能單獨報，線上活動不提供餐點。</p>
   </div>
 
   <label for="q-item" class="big" style="margin-top:8px">輸入品名查詢</label>
@@ -251,8 +251,8 @@
   <div class="bind" role="note" aria-label="演講與餐費綁定">
     <div class="bind-box"><span class="eyebrow">演講活動</span><b>講員費</b><span>最多 2 次、合計 3 小時以內</span></div>
     <div class="bind-link"><span>必須一起</span></div>
-    <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元、要跨用餐時間</span></div>
-    <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>餐費只能跟演講活動一起報，不能單獨報；線上活動不提供餐點。</p>
+    <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元；演講時間要<b>橫跨中午</b>（例如包含 12:30）</span></div>
+    <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>演講時間也要橫跨中午（例如 11:00–13:00 包含 12:30），才能報餐費。餐費不能單獨報，線上活動不提供餐點。</p>
   </div>
   <p class="lede">報帳時講員費和餐費要分開送，並附上活動紀錄（附件 6-4）。</p>
   <div class="dl" data-files="08 06-1 06-4 06-5" data-title="這一頁會用到的表單"></div>
@@ -316,6 +316,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929i"></script>
+<script type="module" src="js/app.js?v=20260929j"></script>
 </body>
 </html>
