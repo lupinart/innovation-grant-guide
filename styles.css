@@ -234,3 +234,6 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
   :root:not([data-theme="light"]) .theme-toggle .i-sun{display:block}
   :root:not([data-theme="light"]) .theme-toggle .i-moon{display:none}
 }
+
+.taxid{gap:4px}
+.taxid .num{font-size:1.8rem;font-weight:700;letter-spacing:.12em;font-variant-numeric:tabular-nums;color:var(--accent)}

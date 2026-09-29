@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929l">
+<link rel="stylesheet" href="styles.css?v=20260929m">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -156,6 +156,12 @@
         <li>所以請用 CYCU 信箱的帳號訂閱，付款日期、金額要清楚</li>
       </ul>
     </div>
+  </div>
+
+  <div class="panel taxid">
+    <span class="big">平台可以填統一編號的話，請填中原大學的統編</span>
+    <span class="num">45002502</span>
+    <span class="privacy">通常在帳單資訊的 Tax ID、VAT、統一編號欄位。請逐字核對，填錯要請平台重開收據。</span>
   </div>
 
   <div class="figure"><img src="img/receipt-example.jpg" alt="ChatGPT 付款畫面範例：左邊的帳單（Invoice）打叉，右邊的收據（Receipt）打勾，收據上載明中原大學" width="575" height="483"></div>
@@ -306,6 +312,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929l"></script>
+<script type="module" src="js/app.js?v=20260929m"></script>
 </body>
 </html>
