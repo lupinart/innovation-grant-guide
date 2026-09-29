@@ -6,10 +6,11 @@ export const PROFILE = {
   planNumber: "115609782",
   unit: "數位教育發展處數位課程發展組",
   hourlyRate: 196,
-  allowedWeekdays: [],
+  // 週六日不排工作；平日的國定假日與學校公告休假日（人事行政總處 115 年辦公日曆表、中原大學 115 學年度行事曆）
+  allowedWeekdays: [1, 2, 3, 4, 5],
   earliestStart: "",
   latestEnd: "",
-  blockedDates: [],
+  blockedDates: ["2026-09-25", "2026-09-28", "2026-10-09", "2026-10-26", "2026-12-24", "2026-12-25", "2027-01-01"],
   location: {
     schoolOnly: true,
     requireRoom: false,
@@ -52,6 +53,8 @@ export function checkInnovation(sheet, options = {}) {
   const issues = base.issues.filter((i) => !["LOCATION_CONFIRM", "WORK_CONTENT_CONFIRM"].includes(i.code));
   for (const i of issues) {
     if (i.code === "ENTRIES_UNREADABLE") i.message = "沒有讀到任何工作紀錄。請確認表格裡已填工作日期與起迄時間。";
+    if (i.code === "BLOCKED_DATE") i.message = "這一天是國定假日或學校公告的休假日，不能排工作。";
+    if (i.code === "WEEKDAY_NOT_ALLOWED") i.message = "這一天是週六或週日，不能排工作。";
   }
   const extra = [];
 
@@ -87,6 +90,13 @@ export function checkInnovation(sheet, options = {}) {
     }
   }
 
+  // 網頁只寫「正常工作時間」，簽到單檢查才抓 7:00 前、20:00 後
+  const offHours = entries.filter((e) => {
+    const s = minutes(e.start), t = minutes(e.end);
+    return s !== null && t !== null && (s < 7 * 60 || t > 20 * 60);
+  });
+  if (offHours.length) extra.push(issue("OFF_HOURS", "error", "有工作時間在早上 7 點以前或晚上 8 點以後，請改到正常工作時間。", offHours.map((e) => e.id)));
+
   const total = base.calculated.totalHours;
   const cap = ROLES[role].totalHours;
   if (entries.length && total > cap) {
@@ -106,6 +116,7 @@ export function checkInnovation(sheet, options = {}) {
       isTA
         ? { code: "NOT_RA", label: "這位學生沒有同時擔任本專案的研究助理（RA）。" }
         : { code: "NOT_TA", label: "這位學生是碩博士生，已簽合意書，且沒有同時擔任本專案的助教工讀生（TA）。" },
+      { code: "NOT_IN_CLASS", label: "工作時間沒有跟這位學生自己的上課時間重疊。" },
       ...base.declarations
     ]
   };

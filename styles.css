@@ -240,3 +240,4 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .step-dl{display:inline-block;margin-top:8px;padding:6px 12px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-weight:500;font-size:.9rem}
 .steps li>span>.step-dl{display:table}
 .step-dl:hover{background:var(--accent-soft)}
+.worktime{display:flex;flex-direction:column;gap:8px}

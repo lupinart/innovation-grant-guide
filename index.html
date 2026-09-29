@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929p">
+<link rel="stylesheet" href="styles.css?v=20260929r">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -81,13 +81,23 @@
       <dl class="kv">
         <dt>誰可以當</dt><dd>本校在學生，大學部、研究所都可以。外校生、已畢業的學生不能用這筆經費</dd>
         <dt>做什麼</dt><dd>協助教師支援教學與研究相關作業</dd>
-        <dt>時數</dt><dd>10–12 月<b>合計 30 小時</b>（5,880 元），每月不超過 30 小時，照當初填的工作時間分配（例如每月 10 小時）；每天最多 8 小時；外籍生每週最多 20 小時</dd>
+        <dt>時數</dt><dd>10–12 月<b>合計 30 小時</b>（5,880 元），每月不超過 30 小時，照當初填的工作時間分配（例如每月 10 小時）；外籍生每週最多 20 小時</dd>
         <dt>要交的文件</dt><dd>「工讀學生聘任投保資訊」（附件 3），寫清楚 10、11、12 月各月的<b>工作日期與時數</b>。外籍生要附工作證</dd>
         <dt>每月</dt><dd>填「臨時工資簽到單」（附件 6-3），時間記到分鐘</dd>
       </dl>
     </div>
   </div>
 
+  <div class="panel worktime">
+    <span class="big">RA、TA 都一樣：工作時間怎麼排</span>
+    <ul class="clean">
+      <li>避開學生自己的上課時間</li>
+      <li>週六日、國定假日、學校公告的休假日不排工作</li>
+      <li>安排在正常工作時間</li>
+      <li>勞工工作時間原則每日不得超過 8 小時</li>
+      <li>勞工繼續工作 4 小時，至少應有 30 分鐘休息</li>
+    </ul>
+  </div>
   <div class="note"><b>TA 最常出錯的地方：</b>工讀金採「日保」，從收到資料到保險生效大約要一週。所以工讀日期請填<b>交資料後至少 7 天</b>的日期，保險生效前不能開始工作。</div>
   <div class="note"><b>另外注意：</b>計畫主持人、共同主持人的配偶或三親等以內親屬，不能聘為 RA 或 TA。同一段時間不能同時領兩個計畫的工讀金。</div>
   <div class="dl" data-files="05 06-2 03 06-3" data-title="這一頁會用到的表單"></div>
@@ -285,6 +295,7 @@
       <li>工作酬金有沒有照 RA 200 元、TA 196 元計算，合計時數與金額對不對</li>
       <li>表頭月份、姓名、學系、學號、電話有沒有填；範例列有沒有刪掉</li>
       <li>每天是否超過 8 小時、連續 4 小時有沒有休息 30 分鐘、時段有沒有重疊</li>
+      <li>有沒有排在週六日、國定假日或學校公告的休假日；有沒有在早上 7 點前或晚上 8 點後工作</li>
       <li>工作地點是不是校內、工作內容有沒有填</li>
       <li>TA：有沒有在保險生效前就上工、跟投保資訊表填的時數一不一樣、外籍生每週是否超過 20 小時</li>
       <li>總時數：TA 三個月合計不超過 30 小時、RA 不超過 50 小時（同一人的多張簽到單會自動加總）</li>
@@ -305,6 +316,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929p"></script>
+<script type="module" src="js/app.js?v=20260929r"></script>
 </body>
 </html>
