@@ -20,7 +20,6 @@ export const PROFILE = {
   allowedWorkContents: []
 };
 
-const ADMIN_WORDS = ["行政", "公文", "報帳", "核銷", "跑腿", "收發", "櫃台", "接電話"];
 
 function issue(code, severity, message, entryIds) {
   return { code, severity, message, ...(entryIds ? { entryIds } : {}) };
@@ -67,11 +66,6 @@ export function checkInnovation(sheet, options = {}) {
   } else {
     const other = entries.filter((e) => e.date && Number(e.date.slice(5, 7)) !== sheet.period.month);
     if (other.length) extra.push(issue("MONTH_MISMATCH", "error", `有工作日期不在表頭的 ${sheet.period.month} 月。每個月要分開填一張簽到單。`, other.map((e) => e.id)));
-  }
-
-  for (const e of entries) {
-    const word = ADMIN_WORDS.find((w) => e.workContent.includes(w));
-    if (word) extra.push(issue("ADMIN_WORK", "error", `工作內容寫到「${word}」。工讀內容要跟教學、研究相關，不能做行政作業。`, [e.id]));
   }
 
   if (isTA && options.insuredFrom) {
