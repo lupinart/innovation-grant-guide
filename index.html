@@ -8,9 +8,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929g">
+<link rel="stylesheet" href="styles.css?v=20260929i">
+<script>
+  // 先套用記住的主題，避免畫面閃一下
+  try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 </head>
 <body>
+<button class="theme-toggle" id="theme-toggle" type="button" aria-label="切換深色模式">
+  <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+  <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>
+</button>
 <div class="wrap">
 
 <!-- ========== 總覽 ========== -->
@@ -22,6 +30,16 @@
   </header>
 
   <div class="tline" id="tline" aria-label="重要時程"></div>
+
+  <div class="remind">
+    <span class="big">老師最常忘記的三件事</span>
+    <ol class="remind-list">
+      <li><b>餐費一定要跟演講一起報</b>，沒有演講就不能報餐費</li>
+      <li><b>講員費最多合計 3 小時</b>（最多 2 次）</li>
+      <li><b>信用卡付款要附刷卡明細</b>，外幣另附刷卡當天的匯率表</li>
+    </ol>
+    <a href="#submit">看報帳說明 →</a>
+  </div>
 
   <nav class="cards">
     <a class="card" href="#people"><span class="q">我要請學生幫忙</span><span class="s">研究助理（RA）跟助教工讀生（TA）差在哪？各要交什麼？</span><span class="go">看差別 →</span></a>
@@ -159,6 +177,14 @@
     <div class="panel"><span class="big">3. 看得到金額</span><span>網路下載列印的收據，經手人要在上面簽名。</span></div>
   </div>
 
+  <div class="panel card-pay">
+    <h3>用信用卡付款？再多附兩樣</h3>
+    <ul class="clean">
+      <li><b>刷卡明細</b>：一定要附上當筆的刷卡紀錄當佐證，沒附有機會被退件</li>
+      <li><b>外幣付款</b>（例如 ChatGPT、Gemini 用美元扣款）：另外附上<b>刷卡當天的匯率表</b></li>
+    </ul>
+  </div>
+
   <h2 style="margin-top:12px">實體店家</h2>
   <div class="compare">
     <div class="panel">
@@ -191,12 +217,13 @@
   <button class="back" data-home>← 回總覽</button>
   <header class="stack" style="gap:6px">
     <div class="eyebrow">報帳要附什麼？用途怎麼寫？</div>
-    <h2>買東西報帳，送這三樣</h2>
+    <h2>買東西報帳，要送這些</h2>
   </header>
   <ol class="steps panel">
     <li><span><b>發票或收據正本</b>（規格見「付完錢，收據要長怎樣？」）</span></li>
     <li><span><b>支出明細表（08）</b>：每一筆都要附。寫清楚付給誰、金額，以及<b>至少 50 字</b>的教學用途說明，老師簽名。</span></li>
     <li><span>買電腦周邊或文具時，用途要說明它<b>跟這門課的教學內容怎麼相關</b>。</span></li>
+    <li><span>用信用卡付款：附上<b>刷卡明細</b>；外幣付款再附<b>刷卡當天的匯率表</b>。</span></li>
   </ol>
 
   <h2 style="margin-top:12px">用途說明：寫品名，不要寫大類</h2>
@@ -289,6 +316,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929g"></script>
+<script type="module" src="js/app.js?v=20260929i"></script>
 </body>
 </html>

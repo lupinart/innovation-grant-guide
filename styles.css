@@ -216,3 +216,21 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
   .bind-link{min-height:3em}
   .bind-link::before{left:50%;right:auto;top:0;bottom:0;border-top:0;border-left:3px solid var(--accent)}
 }
+
+/* 首頁：最常忘記 */
+.remind{display:flex;flex-direction:column;gap:8px;padding:18px 20px;border-radius:10px;border:2px solid var(--no);background:var(--no-soft)}
+.remind .big{color:var(--no)}
+.remind-list{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px}
+.remind a{align-self:flex-start;font-weight:500}
+.card-pay{border:2px solid var(--warn);background:var(--warn-soft)}
+
+/* 深色模式切換 */
+.theme-toggle{position:fixed;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;z-index:10;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px rgb(0 0 0 / .08)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle .i-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .i-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .i-moon{display:none}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-toggle .i-sun{display:block}
+  :root:not([data-theme="light"]) .theme-toggle .i-moon{display:none}
+}

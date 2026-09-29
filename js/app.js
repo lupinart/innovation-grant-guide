@@ -4,6 +4,22 @@ import { checkInnovation, ROLES } from "./check.js";
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
+/* ---------- 深色模式 ---------- */
+const root = document.documentElement;
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const toggle = $("#theme-toggle");
+function syncToggle() {
+  toggle.setAttribute("aria-label", isDark() ? "切換成淺色模式" : "切換成深色模式");
+  toggle.title = toggle.getAttribute("aria-label");
+}
+toggle.addEventListener("click", () => {
+  root.dataset.theme = isDark() ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+  syncToggle();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncToggle);
+syncToggle();
+
 /* ---------- 分頁 ---------- */
 const VIEWS = ["home", "people", "items", "receipt", "submit", "check", "files"];
 function show() {
@@ -72,8 +88,8 @@ const ITEMS = [
   ["腳架、手機支架", "ok", "電腦周邊"],
   ["記憶卡", "ok", "電腦周邊"],
   ["筆、影印紙、迴紋針等文具", "ok", "教學相關才可以，不能私人用"],
-  ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學"],
-  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；收據上方要有老師姓名與 CYCU 信箱"],
+  ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學；附刷卡明細與刷卡當天匯率表"],
+  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；收據上方要有老師姓名與 CYCU 信箱；附刷卡明細與刷卡當天匯率表"],
   ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用"],
   ["印刷、影印、大圖輸出", "warn", "1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
   ["海報、文宣、網站設計", "warn", "要附設計樣本"],
