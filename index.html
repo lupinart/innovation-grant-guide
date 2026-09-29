@@ -21,12 +21,7 @@
     <p class="lede">點選下方的問題，每一頁只回答一件事。規定原文請見核銷注意要點（附件 6-1）。</p>
   </header>
 
-  <div class="timeline" aria-label="重要時程">
-    <div class="tl next"><span class="tag">下一個期限</span><span class="d">10/9（五）</span><span class="w">放棄執行申請截止</span></div>
-    <div class="tl"><span class="d">11/27（五）</span><span class="w">經費核銷截止</span></div>
-    <div class="tl"><span class="d">116/1/8（五）</span><span class="w">專案執行截止</span></div>
-    <div class="tl"><span class="d">116/1/20（三）</span><span class="w">成效報告繳交（附件 7）</span></div>
-  </div>
+  <div class="tline" id="tline" aria-label="重要時程"></div>
 
   <nav class="cards">
     <a class="card" href="#people"><span class="q">我要請學生幫忙</span><span class="s">研究助理（RA）跟助教工讀生（TA）差在哪？各要交什麼？</span><span class="go">看差別 →</span></a>
@@ -217,11 +212,20 @@
   <header class="stack" style="gap:6px">
     <div class="eyebrow">簽到單送出前檢查</div>
     <h2>上傳簽到單，先幫您找錯</h2>
-    <p class="lede">RA 和 TA 的時薪不一樣，每張簽到單請選是誰的。可以一次上傳多張，系統也會比對有沒有同一位學生同時當 RA 和 TA。</p>
+    <p class="lede">先選身分，再上傳簽到單。可以一次上傳多張，也會比對有沒有同一位學生同時當 RA 和 TA。</p>
   </header>
 
-  <label class="drop" id="drop" for="file-input">
-    <span class="big">點這裡選擇檔案，或把檔案拖進來</span>
+  <div class="panel stack" style="gap:10px">
+    <span class="big">第一步：這次要檢查誰的簽到單？</span>
+    <div class="role-pick" role="group" aria-label="選擇身分">
+      <button class="role-btn" data-pick="TA" aria-pressed="false"><b>助教工讀生 TA</b><span>196 元／小時</span></button>
+      <button class="role-btn" data-pick="RA" aria-pressed="false"><b>研究助理 RA</b><span>200 元／小時</span></button>
+    </div>
+    <span class="privacy">RA 和 TA 用同一份簽到單表格，時薪不同，所以要先選。兩種都有的話，選完一種上傳後再選另一種。</span>
+  </div>
+
+  <label class="drop" id="drop" for="file-input" aria-disabled="true">
+    <span class="big" id="drop-title">請先選擇上面的身分</span>
     <span class="privacy">支援 .docx、.odt 電子檔（附件 6-3 臨時工資簽到單）。舊版 .doc、PDF、照片沒辦法自動檢查。</span>
     <input id="file-input" type="file" accept=".docx,.odt" multiple hidden>
   </label>

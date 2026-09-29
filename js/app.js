@@ -16,6 +16,46 @@ document.querySelectorAll("[data-home]").forEach((b) => b.addEventListener("clic
 addEventListener("hashchange", show);
 show();
 
+/* ---------- 時間軸 ---------- */
+const EVENTS = [
+  ["2026-09-18", "9/18（五）", "投保資訊、經費變更、RA 合意書繳交"],
+  ["2026-10-09", "10/9（五）", "放棄執行申請截止"],
+  ["2026-11-27", "11/27（五）", "經費核銷截止"],
+  ["2027-01-08", "116/1/8（五）", "專案執行截止"],
+  ["2027-01-20", "116/1/20（三）", "成效報告繳交（附件 7）"]
+];
+function renderTimeline() {
+  const day = (iso) => new Date(`${iso}T00:00:00`).getTime();
+  const start = day("2026-09-01"), end = day("2027-02-01");
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const today = now.getTime();
+  const pos = (t) => Math.min(100, Math.max(0, ((t - start) / (end - start)) * 100));
+  const nextIdx = EVENTS.findIndex(([d]) => day(d) >= today);
+  const state = (i) => (day(EVENTS[i][0]) < today ? "past" : i === nextIdx ? "next" : "");
+  const months = [["2026-09-01", "9 月"], ["2026-10-01", "10 月"], ["2026-11-01", "11 月"], ["2026-12-01", "12 月"], ["2027-01-01", "1 月"]];
+  const showToday = today >= start && today <= end;
+  let h = `<div class="tl-h"><div class="tl-rail"></div>`;
+  if (showToday) h += `<div class="tl-done" style="width:${pos(today)}%"></div>`;
+  h += months.map(([d, m]) => `<span class="tl-month" style="left:${pos(day(d))}%">${m}</span>`).join("");
+  EVENTS.forEach(([d, label, what], i) => {
+    const p = pos(day(d)), up = i % 2 === 0, st = state(i);
+    const align = p < 12 ? "l" : p > 86 ? "r" : "c";
+    h += `<span class="tl-stem" style="left:${p}%;${up ? "top:72px;height:14px" : "top:101px;height:27px"}"></span>`;
+    h += `<span class="tl-dot ${st}" style="left:${p}%"></span>`;
+    h += `<div class="tl-lab ${up ? "up" : "down"} ${align} ${st}" style="left:${p}%">${st === "next" ? '<span class="tl-tag">下一個期限</span>' : ""}<span class="dd">${label}</span><span class="ww">${what}</span></div>`;
+  });
+  if (showToday) h += `<span class="tl-today" style="left:${pos(today)}%">今天</span>`;
+  h += `</div><ol class="tl-v">`;
+  let todayPlaced = !showToday;
+  EVENTS.forEach(([d, label, what], i) => {
+    if (!todayPlaced && day(d) >= today) { h += `<li class="today">今天 ${now.getMonth() + 1}/${now.getDate()}</li>`; todayPlaced = true; }
+    h += `<li class="${state(i)}"><span class="dd">${label}${state(i) === "next" ? '　<span class="tl-tag">下一個期限</span>' : ""}</span><span>${what}</span></li>`;
+  });
+  if (!todayPlaced) h += `<li class="today">今天</li>`;
+  $("#tline").innerHTML = h + "</ol>";
+}
+renderTimeline();
+
 /* ---------- 品項查詢 ---------- */
 const ITEMS = [
   ["隨身碟、隨身硬碟", "ok", "電腦周邊，用途要寫跟課程的關係"],
@@ -99,10 +139,11 @@ $("#file-list").innerHTML = FILES.map(([path, name, title, desc]) => {
 /* ---------- 簽到單檢查 ---------- */
 const sheets = []; // { id, fileName, sheet, role, insuredFrom, plannedHours, foreign, error }
 let seq = 0;
+let pickedRole = "";
 
 async function addFiles(fileList) {
   for (const file of fileList) {
-    const item = { id: ++seq, fileName: file.name, role: "TA", insuredFrom: "", plannedHours: "", foreign: false };
+    const item = { id: ++seq, fileName: file.name, role: pickedRole, insuredFrom: "", plannedHours: "", foreign: false };
     try {
       item.sheet = await parseTimesheet(await file.arrayBuffer());
       item.foreign = item.sheet.foreign;
@@ -149,7 +190,7 @@ function renderSheet(item) {
       <button class="remove" data-remove="${item.id}">移除</button>
     </div>
     <div class="opts-row">
-      <span>這張是誰的簽到單？</span>
+      <span>身分（選錯可以在這裡改）</span>
       <span class="seg" role="group" aria-label="身分">
         ${Object.entries(ROLES).map(([k, v]) => `<button data-role="${k}" data-id="${item.id}" aria-pressed="${item.role === k}">${v.label}（${v.rate} 元）</button>`).join("")}
       </span>
@@ -193,7 +234,13 @@ $("#sheets").addEventListener("change", (e) => {
 });
 
 const input = $("#file-input"), drop = $("#drop");
+document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => {
+  pickedRole = b.dataset.pick;
+  document.querySelectorAll("[data-pick]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  drop.setAttribute("aria-disabled", "false");
+  $("#drop-title").textContent = `第二步：上傳${ROLES[pickedRole].label}的簽到單（點這裡選檔，或把檔案拖進來）`;
+}));
 input.addEventListener("change", () => { addFiles([...input.files]); input.value = ""; });
 drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
 drop.addEventListener("dragleave", () => drop.classList.remove("over"));
-drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles([...e.dataTransfer.files]); });
+drop.addEventListener("drop", (e) => { e.preventDefault(); if (!pickedRole) return; drop.classList.remove("over"); addFiles([...e.dataTransfer.files]); });
