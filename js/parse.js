@@ -1,7 +1,7 @@
 // 簽到單解析：沿用 signin-checker 的 DOCX 解析，另外支援學校原始的 ODT 表單
-import { strFromU8, unzipSync } from "./vendor/fflate.js";
-import { footerSignature, personalValue } from "./fields.js";
-import { inferPeriod } from "./period.js";
+import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20260929x";
+import { footerSignature, personalValue } from "./fields.js?v=20260929x";
+import { inferPeriod } from "./period.js?v=20260929x";
 
 function decodeXml(value) {
   return value
@@ -116,11 +116,12 @@ export async function parseTimesheet(input) {
   } catch {
     throw new Error("讀不到這個檔案。請上傳 .docx 或 .odt 電子檔；舊版 .doc、PDF、照片沒辦法自動檢查。");
   }
-  let rawXml, lines, rows, fullText;
+  let rawXml, lines, allLines, rows, fullText;
   if (archive["word/document.xml"]) {
     rawXml = strFromU8(archive["word/document.xml"]);
     const xml = withoutTextBoxes(rawXml);
     lines = docxParagraphs(xml);
+    allLines = lines;
     rows = docxRows(xml);
     fullText = docxText(rawXml);
   } else if (archive["content.xml"]) {
@@ -128,6 +129,7 @@ export async function parseTimesheet(input) {
     const body = rawXml.slice(Math.max(0, rawXml.indexOf("<office:body")));
     lines = odtParagraphs(body.replaceAll(/<table:table[\s>][\s\S]*?<\/table:table>/g, ""));
     rows = odtRows(body);
+    allLines = odtParagraphs(body);
     fullText = odtParagraphs(body).join(" ");
   } else {
     throw new Error("這不是 Word（.docx）或 ODT 檔案，請確認上傳的是簽到單電子檔。");
@@ -136,9 +138,13 @@ export async function parseTimesheet(input) {
   const context = inferPeriod(fullText);
   const entries = rows.map((cells) => workEntry(cells, context)).filter(Boolean);
   const completeText = lines.join(" ");
-  const hoursMatch = /(?:X|×|x)\s*(\d+(?:\.\d+)?)\s*小時/i.exec(completeText);
-  const payMatch = /金額\s*[:：]?\s*(\d[\d,]*(?:\.\d+)?)\s*元/.exec(completeText);
-  const footer = footerSignature(lines);
+  // ODT 表單的合計與頁尾簽名放在表格裡，表格外找不到就從整份文件找
+  const allText = allLines.join(" ");
+  const hoursRe = /(?:X|×|x)[\s_＿]*(\d+(?:\.\d+)?)[\s_＿]*小時/i;
+  const payRe = /金額\s*[:：]?[\s_＿]*(\d[\d,]*(?:\.\d+)?)[\s_＿]*元/;
+  const hoursMatch = hoursRe.exec(completeText) ?? hoursRe.exec(allText);
+  const payMatch = payRe.exec(completeText) ?? payRe.exec(allText);
+  const footer = (() => { const f = footerSignature(lines); return f.found ? f : footerSignature(allLines); })();
   const monthWritten = /(\d{2,4})\s*年\s*(\d{1,2})\s*月/.exec(fullText);
 
   return {

@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js";
+import { checkTimesheet } from "./rules.js?v=20260929x";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -50,7 +50,7 @@ export function checkInnovation(sheet, options = {}) {
   const samples = sheet.entries.filter((e) => e.isSample);
   const entries = sheet.entries.filter((e) => !e.isSample);
   const base = checkTimesheet({ ...sheet, entries }, { ...PROFILE, hourlyRate: rate });
-  const issues = base.issues.filter((i) => !["LOCATION_CONFIRM", "WORK_CONTENT_CONFIRM"].includes(i.code));
+  const issues = base.issues.filter((i) => !["LOCATION_CONFIRM", "WORK_CONTENT_CONFIRM", "SIGNATURE_CHECK", "FOOTER_SIGNATURE_CHECK"].includes(i.code));
   for (const i of issues) {
     if (i.code === "ENTRIES_UNREADABLE") i.message = "沒有讀到任何工作紀錄。請確認表格裡已填工作日期與起迄時間。";
     if (i.code === "BLOCKED_DATE") i.message = "這一天是國定假日或學校公告的休假日，不能排工作。";
@@ -96,6 +96,10 @@ export function checkInnovation(sheet, options = {}) {
     return s !== null && t !== null && (s < 7 * 60 || t > 20 * 60);
   });
   if (offHours.length) extra.push(issue("OFF_HOURS", "error", "有工作時間在早上 7 點以前或晚上 8 點以後，請改到正常工作時間。", offHours.map((e) => e.id), "time"));
+
+  // 簽名一律用黃框提醒本人列印後親筆簽
+  if (entries.length) extra.push(issue("SIGN_HERE", "review", "列印後，每一列的簽章欄都要本人親筆簽名（Word 裡打字的簽名不算）。", entries.map((e) => e.id), "signature"));
+  extra.push(issue("SIGN_FOOTER", "review", "列印後，頁尾聲明的「簽名」要本人親筆簽名。", null, "footerSignature"));
 
   const total = base.calculated.totalHours;
   const cap = ROLES[role].totalHours;

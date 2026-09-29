@@ -259,9 +259,9 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .paper-total{margin-top:12px!important;text-align:right}
 .annotation-target{position:relative!important;outline:3px solid #c0392b!important;outline-offset:-3px}
 .annotation-badge{position:absolute;z-index:2;top:-.55rem;right:calc(-.45rem + var(--annotation-slot,0)*1.1rem);display:grid;width:1.1rem;height:1.1rem;place-items:center;border:1px solid #fff;border-radius:50%;background:#c0392b;color:#fff;font-size:.65rem;font-weight:800;line-height:1}
-.annotation-target[data-severity="review"]{outline-color:#d68910!important}
-.annotation-badge[data-severity="review"]{background:#d68910}
+.annotation-target[data-severity="review"]{outline-color:#e6b800!important}
+.annotation-badge[data-severity="review"]{background:#f2c200;color:#1d2a33}
 [data-annotation-number][data-active="true"]{outline:4px solid #1f5f7a!important;outline-offset:2px}
 .issues .num{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:0;background:#c0392b;color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
-.issues .num[data-sev="review"]{background:#d68910}
+.issues .num[data-sev="review"]{background:#f2c200;color:#1d2a33}
 .ins-due{flex-basis:100%;color:var(--muted);font-size:.88rem}
