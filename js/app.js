@@ -1,5 +1,6 @@
 import { parseTimesheet } from "./parse.js";
 import { checkInnovation, ROLES } from "./check.js";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -166,7 +167,9 @@ async function addFiles(fileList) {
   for (const file of fileList) {
     const item = { id: ++seq, fileName: file.name, role: pickedRole, insuredFrom: "", plannedHours: "", foreign: false };
     try {
-      item.sheet = await parseTimesheet(await file.arrayBuffer());
+      item.bytes = await file.arrayBuffer();
+      item.sheet = await parseTimesheet(item.bytes.slice(0));
+      item.isDocx = /\.docx$/i.test(file.name);
       item.foreign = item.sheet.foreign;
     } catch (err) {
       item.error = err.message;
@@ -190,7 +193,7 @@ function renderCross() {
     }
   }
   const msgs = [];
-  if (clashes.length) msgs.push(`<b>同一人不能同時是 RA 和 TA：</b>${clashes.join("、")}。請確認這位學生的身分，只能保留其中一種。`);
+  if (clashes.length) msgs.push(`<b>同一人不能同時是 RA 和 TA：</b>${clashes.join("、")}。一個人只能擔任其中一種，請跟老師確認身分。`);
   // 同一人同身分的多張簽到單，加總後不能超過總時數（TA 30、RA 50）
   const groups = new Map();
   for (const s of ok) {
@@ -209,6 +212,14 @@ function renderCross() {
   box.innerHTML = msgs.join("<br>");
 }
 
+// 日保要在生效日前 7 天把投保資料送到數位處
+function insuranceDue(iso) {
+  if (!iso) return "投保資料要在保險生效日的前 7 天送到數位處。例如 10/8 生效，就要在 10/1 前送到。";
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() - 7);
+  return `投保資料要在 <b>${d.getMonth() + 1}/${d.getDate()}</b> 以前送到數位處，才能在這天生效。`;
+}
+
 function rowsLabel(ids) { return ids?.length ? `第 ${ids.join("、")} 列：` : ""; }
 
 function renderSheet(item) {
@@ -218,6 +229,8 @@ function renderSheet(item) {
   const r = checkInnovation(item.sheet, item);
   const errors = r.issues.filter((i) => i.severity === "error");
   const reviews = r.issues.filter((i) => i.severity === "review");
+  const notes = buildAnnotations([...errors, ...reviews], item.sheet);
+  item.notes = notes;
   const s = item.sheet;
   const who = [s.name, s.studentId].filter(Boolean).map(esc).join("　") || "（姓名、學號未填）";
   const ta = item.role === "TA";
@@ -234,6 +247,7 @@ function renderSheet(item) {
     </div>
     ${ta ? `<div class="opts-row">
       <label>保險生效日 <input type="date" id="ins-${item.id}" data-field="insuredFrom" data-id="${item.id}" value="${esc(item.insuredFrom)}"></label>
+      <span class="ins-due">${insuranceDue(item.insuredFrom)}</span>
       <label>投保資訊表填的本月時數 <input type="number" min="0" step="0.5" id="plan-${item.id}" data-field="plannedHours" data-id="${item.id}" value="${esc(item.plannedHours)}"></label>
       <label><input type="checkbox" id="fr-${item.id}" data-field="foreign" data-id="${item.id}" ${item.foreign ? "checked" : ""}> 外籍生</label>
     </div>` : ""}
@@ -241,11 +255,11 @@ function renderSheet(item) {
       <span>${s.period.written ? `${s.period.year - 1911} 年 ${s.period.month} 月` : "月份未填"}</span>
       <span>工作紀錄 <b>${r.entries.length}</b> 筆</span>
       <span>應為 <b>${r.calculated.totalHours}</b> 小時</span>
-      <span>應領 <b>${r.calculated.totalPay.toLocaleString()}</b> 元</span>
     </div>
-    ${errors.length || reviews.length
-      ? `<ul class="issues">${[...errors, ...reviews].map((i) => `<li><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${rowsLabel(i.entryIds)}${esc(i.message)}</span></li>`).join("")}</ul>`
+    ${notes.length
+      ? `<ul class="issues">${notes.map((i) => `<li><button class="num" data-sev="${i.severity}" data-focus="${item.id}:${i.number}" title="在簽到單上找到這一處">${i.number}</button><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${rowsLabel(i.entryIds)}${esc(i.message)}</span></li>`).join("")}</ul>`
       : `<div class="allgood">沒有發現需要修正的地方</div>`}
+    <figure class="doc-fig"><figcaption>簽到單上有編號框線的地方，就是要改或要確認的位置</figcaption><div class="doc-view" id="doc-${item.id}"></div></figure>
     <div class="decl"><b>送出前請自己確認：</b>${r.declarations.map((d, n) => `<label><input type="checkbox" id="d-${item.id}-${n}"> ${esc(d.label)}</label>`).join("")}</div>
   </div>`;
 }
@@ -254,10 +268,59 @@ function renderSheets() {
   $("#sheets").innerHTML = sheets.map(renderSheet).join("");
   $("#check-empty").hidden = sheets.length > 0;
   renderCross();
+  sheets.filter((s) => s.sheet).forEach(renderDoc);
+}
+
+// 簽到單原貌＋標記：Word 檔照原排版顯示；ODT 或無法顯示時，用讀到的內容重畫成表格
+let previewLib;
+function loadScript(src) {
+  return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
+}
+function docxPreview() {
+  previewLib ??= loadScript("js/vendor/jszip.min.js").then(() => loadScript("js/vendor/docx-preview.min.js")).then(() => window.docx);
+  return previewLib;
+}
+function fallbackPaper(s) {
+  const cell = (v, tag = "td") => `<${tag}>${esc(v)}</${tag}>`;
+  return `<div class="paper">
+    <h4>計畫案工讀生及臨時工簽到單</h4>
+    <div class="paper-meta">${[["計畫名稱", s.planName], ["執行單位", s.unit], ["計畫編號", s.planNumber], ["姓名", s.name], ["學系", s.department], ["學號", s.studentId], ["聯絡電話", s.phone]].map(([k, v]) => `<p>${k}：${esc(v)}</p>`).join("")}</div>
+    <table><tr>${["編號", "工作日期", "開始", "結束", "工作時數", "工作酬金", "工作地點", "工作內容", "簽章"].map((v) => cell(v, "th")).join("")}</tr>
+    ${s.entries.map((e) => `<tr>${[e.id, e.date, e.start, e.end, e.hours, e.pay, e.location, e.workContent, e.signature].map((v) => cell(v)).join("")}</tr>`).join("")}</table>
+    <p class="paper-total">計酬基準 X ${esc(s.claimedTotalHours)} 小時　金額：${esc(s.claimedTotalPay)} 元</p>
+    <p>簽名：${esc(s.footerSignature)}</p>
+  </div>`;
+}
+async function renderDoc(item) {
+  const box = document.getElementById(`doc-${item.id}`);
+  if (!box) return;
+  if (item.isDocx) {
+    try {
+      const lib = await docxPreview();
+      const holder = document.createElement("div");
+      holder.className = "docx-render";
+      await lib.renderAsync(item.bytes.slice(0), holder, null, { inWrapper: true, ignoreWidth: false, ignoreHeight: false, debug: false });
+      if (!box.isConnected) return;
+      box.replaceChildren(holder);
+      annotateRenderedDocx(holder, item.notes);
+      return;
+    } catch { /* 顯示不了就改用重畫的表格 */ }
+  }
+  box.innerHTML = fallbackPaper(item.sheet);
+  annotateRenderedDocx(box, item.notes);
 }
 
 const find = (id) => sheets.find((s) => s.id === Number(id));
 $("#sheets").addEventListener("click", (e) => {
+  const focus = e.target.closest("[data-focus]");
+  if (focus) {
+    const [id, n] = focus.dataset.focus.split(":");
+    const marks = [...document.querySelectorAll(`#doc-${id} [data-annotation-number="${n}"]`)];
+    marks.forEach((m) => { m.dataset.active = "true"; });
+    marks[0]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    setTimeout(() => marks.forEach((m) => delete m.dataset.active), 1600);
+    return;
+  }
   const role = e.target.closest("[data-role]");
   if (role) { find(role.dataset.id).role = role.dataset.role; renderSheets(); return; }
   const rm = e.target.closest("[data-remove]");

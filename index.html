@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929t">
+<link rel="stylesheet" href="styles.css?v=20260929v">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -36,7 +36,7 @@
     <a class="card" href="#items"><span class="q">這個東西能不能報？</span><span class="s">輸入品名，直接查可報、不可報與原因。</span><span class="go">查品項 →</span></a>
     <a class="card" href="#receipt"><span class="q">付完錢，收據要長怎樣？</span><span class="s">ChatGPT、Gemini 等線上平台，以及發票、收據的規則。</span><span class="go">看範例 →</span></a>
     <a class="card" href="#submit"><span class="q">報帳要附什麼？用途怎麼寫？</span><span class="s">支出明細表（08）怎麼填、用途說明的正確寫法。</span><span class="go">看寫法 →</span></a>
-    <a class="card" href="#check"><span class="q">簽到單送出前檢查</span><span class="s">上傳 RA 或 TA 的簽到單電子檔，自動找出算錯、漏填的地方。</span><span class="go">上傳檢查 →</span></a>
+    <a class="card" href="#check"><span class="q">簽到單送出前檢查</span><span class="s">給擔任 RA、TA 的同學使用：上傳自己的簽到單電子檔，自動找出算錯、漏填的地方。</span><span class="go">上傳檢查 →</span></a>
     <a class="card" href="#files"><span class="q">附件下載</span><span class="s">合意書、投保資訊表、簽到單、支出明細表等所有表單。</span><span class="go">下載表單 →</span></a>
   </nav>
 
@@ -263,17 +263,17 @@
   <button class="back" data-home>← 回總覽</button>
   <header class="stack" style="gap:6px">
     <div class="eyebrow">簽到單送出前檢查</div>
-    <h2>上傳簽到單，先幫您找錯</h2>
-    <p class="lede">先選身分，再上傳簽到單。可以一次上傳多張，也會比對有沒有同一位學生同時當 RA 和 TA。</p>
+    <h2>上傳簽到單，先幫你找錯</h2>
+    <p class="lede">給擔任 RA、TA 的同學使用。先選自己的身分，再上傳簽到單。10、11、12 月的簽到單可以一起上傳，會幫你加總三個月的時數。</p>
   </header>
 
   <div class="panel stack" style="gap:10px">
-    <span class="big">第一步：這次要檢查誰的簽到單？</span>
+    <span class="big">第一步：你的身分是？</span>
     <div class="role-pick" role="group" aria-label="選擇身分">
       <button class="role-btn" data-pick="TA" aria-pressed="false"><b>助教工讀生 TA</b><span>196 元／小時</span></button>
       <button class="role-btn" data-pick="RA" aria-pressed="false"><b>研究助理 RA</b><span>200 元／小時</span></button>
     </div>
-    <span class="privacy">RA 和 TA 用同一份簽到單表格，時薪不同，所以要先選。兩種都有的話，選完一種上傳後再選另一種。</span>
+    <span class="privacy">RA 和 TA 用同一份簽到單表格，時薪不同，所以要先選。不確定自己是哪一種，請問老師。</span>
   </div>
 
   <label class="drop" id="drop" for="file-input" aria-disabled="true">
@@ -281,7 +281,7 @@
     <span class="privacy">支援 .docx、.odt 電子檔（附件 6-3 臨時工資簽到單）。舊版 .doc、PDF、照片沒辦法自動檢查。</span>
     <input id="file-input" type="file" accept=".docx,.odt" multiple hidden>
   </label>
-  <p class="privacy">檔案只在您的瀏覽器裡讀取，不會上傳到任何地方。</p>
+  <p class="privacy">檔案只在你的瀏覽器裡讀取，不會上傳到任何地方。</p>
 
   <div id="cross" class="cross" hidden></div>
   <div id="sheets" class="stack"></div>
@@ -316,6 +316,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929t"></script>
+<script type="module" src="js/app.js?v=20260929v"></script>
 </body>
 </html>

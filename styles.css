@@ -134,7 +134,7 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .stats{display:flex;flex-wrap:wrap;gap:8px 24px;font-variant-numeric:tabular-nums}
 .stats b{font-size:1.15rem}
 .issues{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
-.issues li{display:grid;grid-template-columns:4.5em 1fr;gap:12px;align-items:start}
+.issues li{display:grid;grid-template-columns:1.6rem 4.5em 1fr;gap:12px;align-items:start}
 .allgood{padding:12px 16px;border-radius:8px;background:var(--ok-soft);color:var(--ok);font-weight:700}
 .decl{display:flex;flex-direction:column;gap:6px;font-size:.92rem}
 .decl label{display:flex;gap:8px;align-items:flex-start}
@@ -241,3 +241,27 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .steps li>span>.step-dl{display:table}
 .step-dl:hover{background:var(--accent-soft)}
 .worktime{display:flex;flex-direction:column;gap:8px}
+
+/* 簽到單原貌與標記 */
+.doc-fig{margin:0;border:1px solid var(--line);border-radius:10px;background:var(--bg);min-width:0}
+.doc-fig figcaption{padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:.88rem}
+.doc-view{max-height:70vh;overflow:auto;padding:16px;overscroll-behavior:contain}
+.docx-render{width:max-content;min-width:100%}
+.docx-render .docx-wrapper{padding:0;background:transparent}
+.docx-render .docx-wrapper>section.docx{margin:0 auto 12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.paper{width:auto;min-width:40rem;max-width:52rem;margin-inline:auto;padding:28px;background:#fff;color:#1d2a33;font-size:.85rem;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.paper h4{text-align:center;margin:0 0 14px;font-size:1.1rem}
+.paper-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 16px;margin-bottom:12px}
+.paper-meta p,.paper>p{margin:0}
+.paper table{width:100%;border-collapse:collapse;table-layout:fixed}
+.paper th,.paper td{border:1px solid #1d2a33;padding:4px;overflow-wrap:anywhere;vertical-align:top}
+.paper th:nth-child(7),.paper th:nth-child(8){width:18%}
+.paper-total{margin-top:12px!important;text-align:right}
+.annotation-target{position:relative!important;outline:3px solid #c0392b!important;outline-offset:-3px}
+.annotation-badge{position:absolute;z-index:2;top:-.55rem;right:calc(-.45rem + var(--annotation-slot,0)*1.1rem);display:grid;width:1.1rem;height:1.1rem;place-items:center;border:1px solid #fff;border-radius:50%;background:#c0392b;color:#fff;font-size:.65rem;font-weight:800;line-height:1}
+.annotation-target[data-severity="review"]{outline-color:#d68910!important}
+.annotation-badge[data-severity="review"]{background:#d68910}
+[data-annotation-number][data-active="true"]{outline:4px solid #1f5f7a!important;outline-offset:2px}
+.issues .num{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:0;background:#c0392b;color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.issues .num[data-sev="review"]{background:#d68910}
+.ins-due{flex-basis:100%;color:var(--muted);font-size:.88rem}

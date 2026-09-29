@@ -22,8 +22,8 @@ export const PROFILE = {
 };
 
 
-function issue(code, severity, message, entryIds) {
-  return { code, severity, message, ...(entryIds ? { entryIds } : {}) };
+function issue(code, severity, message, entryIds, field) {
+  return { code, severity, message, ...(entryIds ? { entryIds } : {}), ...(field ? { field } : {}) };
 }
 
 function minutes(value) {
@@ -59,7 +59,7 @@ export function checkInnovation(sheet, options = {}) {
   const extra = [];
 
   if (samples.length) {
-    extra.push(issue("SAMPLE_ROW", "error", "表單上的範例列（9/1、9:00–12:00）還在，請刪除或改成實際資料。", samples.map((e) => e.id)));
+    extra.push(issue("SAMPLE_ROW", "error", "表單上的範例列（9/1、9:00–12:00）還在，請刪除或改成實際資料。", samples.map((e) => e.id), "date"));
   }
   if (sheet.outsider) {
     extra.push(issue("OUTSIDER", "error", "勾選了「校外人士」。外校生或已畢業的學生不能用本補助款支領工讀金。"));
@@ -68,12 +68,12 @@ export function checkInnovation(sheet, options = {}) {
     extra.push(issue("MONTH_MISSING", "error", "表頭「115年　月」的月份沒有填。"));
   } else {
     const other = entries.filter((e) => e.date && Number(e.date.slice(5, 7)) !== sheet.period.month);
-    if (other.length) extra.push(issue("MONTH_MISMATCH", "error", `有工作日期不在表頭的 ${sheet.period.month} 月。每個月要分開填一張簽到單。`, other.map((e) => e.id)));
+    if (other.length) extra.push(issue("MONTH_MISMATCH", "error", `有工作日期不在表頭的 ${sheet.period.month} 月。每個月要分開填一張簽到單。`, other.map((e) => e.id), "date"));
   }
 
   if (isTA && options.insuredFrom) {
     const early = entries.filter((e) => e.date && e.date < options.insuredFrom);
-    if (early.length) extra.push(issue("BEFORE_INSURANCE", "error", `有工作日期早於保險生效日（${options.insuredFrom.slice(5).replace("-", "/")}）。保險生效前不能開始工作。`, early.map((e) => e.id)));
+    if (early.length) extra.push(issue("BEFORE_INSURANCE", "error", `有工作日期早於保險生效日（${options.insuredFrom.slice(5).replace("-", "/")}）。保險生效前不能開始工作。`, early.map((e) => e.id), "date"));
   }
 
   const foreign = sheet.foreign || options.foreign;
@@ -86,7 +86,7 @@ export function checkInnovation(sheet, options = {}) {
       weeks.set(k, [(weeks.get(k)?.[0] ?? 0) + (t - s), [...(weeks.get(k)?.[1] ?? []), e.id]]);
     }
     for (const [k, [m, ids]] of weeks) {
-      if (m > 20 * 60) extra.push(issue("FOREIGN_WEEKLY", "error", `外籍生每週最多 20 小時，${k}合計 ${Math.round(m / 6) / 10} 小時。`, ids));
+      if (m > 20 * 60) extra.push(issue("FOREIGN_WEEKLY", "error", `外籍生每週最多 20 小時，${k}合計 ${Math.round(m / 6) / 10} 小時。`, ids, "date"));
     }
   }
 
@@ -95,15 +95,15 @@ export function checkInnovation(sheet, options = {}) {
     const s = minutes(e.start), t = minutes(e.end);
     return s !== null && t !== null && (s < 7 * 60 || t > 20 * 60);
   });
-  if (offHours.length) extra.push(issue("OFF_HOURS", "error", "有工作時間在早上 7 點以前或晚上 8 點以後，請改到正常工作時間。", offHours.map((e) => e.id)));
+  if (offHours.length) extra.push(issue("OFF_HOURS", "error", "有工作時間在早上 7 點以前或晚上 8 點以後，請改到正常工作時間。", offHours.map((e) => e.id), "time"));
 
   const total = base.calculated.totalHours;
   const cap = ROLES[role].totalHours;
   if (entries.length && total > cap) {
-    extra.push(issue("MONTH_OVER_CAP", "error", `本月合計 ${total} 小時，超過${isTA ? " TA 三個月總共的 30 小時（每月不能超過 30 小時）" : " RA 三個月總共的 50 小時"}。`));
+    extra.push(issue("MONTH_OVER_CAP", "error", `本月合計 ${total} 小時，超過${isTA ? " TA 三個月總共的 30 小時（每月不能超過 30 小時）" : " RA 三個月總共的 50 小時"}。`, null, "totalHours"));
   }
   if (isTA && options.plannedHours && entries.length && Math.abs(Number(options.plannedHours) - total) > 0.001) {
-    extra.push(issue("PLAN_MISMATCH", "review", `跟投保資訊表填的本月 ${options.plannedHours} 小時不同（簽到單合計 ${total} 小時），請確認是否需要通知承辦調整。`));
+    extra.push(issue("PLAN_MISMATCH", "review", `跟投保資訊表填的本月 ${options.plannedHours} 小時不同（簽到單合計 ${total} 小時），請跟老師確認。`, null, "totalHours"));
   }
 
   return {
@@ -114,9 +114,9 @@ export function checkInnovation(sheet, options = {}) {
     calculated: base.calculated,
     declarations: [
       isTA
-        ? { code: "NOT_RA", label: "這位學生沒有同時擔任本專案的研究助理（RA）。" }
-        : { code: "NOT_TA", label: "這位學生是碩博士生，已簽合意書，且沒有同時擔任本專案的助教工讀生（TA）。" },
-      { code: "NOT_IN_CLASS", label: "工作時間沒有跟這位學生自己的上課時間重疊。" },
+        ? { code: "NOT_RA", label: "我沒有同時擔任本專案的研究助理（RA）。" }
+        : { code: "NOT_TA", label: "我是碩博士生，已簽合意書，而且沒有同時擔任本專案的助教工讀生（TA）。" },
+      { code: "NOT_IN_CLASS", label: "工作時間沒有跟我自己的上課時間重疊。" },
       ...base.declarations
     ]
   };
