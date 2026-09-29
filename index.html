@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260929n">
+<link rel="stylesheet" href="styles.css?v=20260929o">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -110,15 +110,8 @@
     <p>本計畫非以提升學校基本教學設備為目的。凡屬通用之基礎工具（如：電腦網路卡、課桌椅等），皆屬學校應提供之基本設施，不列入本計畫補助範圍。請老師務必聚焦在「因應本門創新課程才特別需要」的教學精進需求。</p>
   </blockquote>
 
-  <div class="bind" role="note" aria-label="演講與餐費綁定">
-    <div class="bind-box"><span class="eyebrow">演講活動</span><b>講員費</b><span>最多 2 次、合計 3 小時以內</span></div>
-    <div class="bind-link"><span>必須一起</span></div>
-    <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元；演講時間要<b>包含 12:30 左右</b></span></div>
-    <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>演講時間也要包含 12:30 左右的用餐時間，才能報餐費。餐費不能單獨報，線上活動不提供餐點。</p>
-  </div>
-
   <label for="q-item" class="big" style="margin-top:8px">輸入品名查詢</label>
-  <input id="q-item" class="search" type="search" placeholder="例如：隨身碟、印表機、Gemini、便當" autocomplete="off">
+  <input id="q-item" class="search" type="search" placeholder="例如：隨身碟、印表機、Gemini、影印" autocomplete="off">
   <div class="chips" role="group" aria-label="篩選">
     <button class="chip" data-f="all" aria-pressed="true">全部</button>
     <button class="chip" data-f="ok" aria-pressed="false">可以報</button>
@@ -217,7 +210,7 @@
   </header>
   <ol class="steps panel">
     <li><span><b>發票或收據正本</b>（規格見「付完錢，收據要長怎樣？」）</span></li>
-    <li><span><b>支出明細表（08）</b>：每一筆都要附。寫清楚付給誰、金額，以及<b>至少 50 字</b>的教學用途說明，老師簽名。</span></li>
+    <li><span><b>支出明細表（08）</b>：每一筆都要附。寫清楚付給誰、金額，以及<b>至少 50 字</b>的教學用途說明，老師簽名。<a class="step-dl" href="files/08-expense-detail.doc" download="08_支出明細表.doc">下載支出明細表（08）</a></span></li>
     <li><span>買電腦周邊或文具時，用途要說明它<b>跟這門課的教學內容怎麼相關</b>。</span></li>
     <li><span>用信用卡付款：附上<b>刷卡明細</b>；外幣付款再附<b>刷卡當天的匯率表</b>。</span></li>
   </ol>
@@ -312,6 +305,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260929n"></script>
+<script type="module" src="js/app.js?v=20260929o"></script>
 </body>
 </html>
