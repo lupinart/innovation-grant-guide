@@ -110,16 +110,24 @@ function addLocationIssues(item, profile, issues) {
     // 有大樓名單時：一定要寫得出是哪一棟，且要有教室／研究室號碼（「校內教室」「研究室」這類模糊寫法直接退）
     const buildings = config.buildings ?? [];
     if (buildings.length && !forbidden) {
-      const building = buildings.find((name) => location.includes(name));
+      const building = buildings.filter((name) => location.includes(name)).sort((a, b) => b.length - a.length)[0];
       const noRoomNeeded = (config.noRoomNeeded ?? []).some((name) => location.includes(name));
       if (!building) {
         issues.push(makeIssue("LOCATION_BUILDING_UNKNOWN", SEVERITY.error, "看不出是校內哪一棟。請寫大樓名稱＋教室或研究室號碼，例如「電學大樓 301」，不要只寫「校內」「教室」「研究室」。", {
           entryIds: [item.id], field: "location"
         }));
       } else if (!noRoomNeeded && !/\d{2,4}/.test(location)) {
-        issues.push(makeIssue("ROOM_REQUIRED", SEVERITY.error, `請補上教室或研究室號碼，例如「${building} 301」。`, {
-          entryIds: [item.id], field: "location"
-        }));
+        // 沒有房號但有寫樓層或空間名稱（例如「商設館 2F工作室」）：可能是對的，黃框請學生再確認
+        const described = /\d\s*[FfＦ樓]|[B地下]\s*\d|[一二三四五六七八九十]\s*樓|(工作|教|研究|辦公|實驗|會議|討論|電腦|製作|展演)室|(工作|研究)坊|中心|大廳|展覽/.test(location.replace(building, ""));
+        if (described) {
+          issues.push(makeIssue("ROOM_CONFIRM", SEVERITY.review, `沒有看到教室號碼。請再次確認教室名稱，有門牌號碼就補上，例如「${building} 301」。`, {
+            entryIds: [item.id], field: "location"
+          }));
+        } else {
+          issues.push(makeIssue("ROOM_REQUIRED", SEVERITY.error, `請補上教室或研究室號碼，例如「${building} 301」。`, {
+            entryIds: [item.id], field: "location"
+          }));
+        }
       }
     } else if (config.requireRoom && !/\d{2,4}[A-Za-z]?/.test(location)) {
       issues.push(makeIssue("ROOM_REQUIRED", SEVERITY.error, "請寫出實際研究室名稱與房號，不要只寫學校或研究室。", {
