@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20260930d";
+import { checkTimesheet } from "./rules.js?v=20260930e";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -80,6 +80,11 @@ export function checkInnovation(sheet, options = {}) {
     if (i.code === "ENTRIES_UNREADABLE") i.message = "沒有讀到任何工作紀錄。請確認表格裡已填工作日期與起迄時間。";
     if (i.code === "BLOCKED_DATE") i.message = "這一天是國定假日或學校公告的休假日，不能排工作。";
     if (i.code === "WEEKDAY_NOT_ALLOWED") i.message = "這一天是週六或週日，不能排工作。";
+    if (i.code === "PLAN_NAME_MISMATCH") i.message = /教資/.test(sheet.planName ?? "")
+      ? `這是教資案的簽到單。創新應用補助的計畫名稱應為「${PROFILE.planName}」，請改用本頁附件 6-3 的簽到單。`
+      : `計畫名稱應為「${PROFILE.planName}」。`;
+    if (i.code === "PLAN_NUMBER_MISMATCH") i.message = `計畫編號應為 ${PROFILE.planNumber}。`;
+    if (i.code === "UNIT_MISMATCH") i.message = `執行單位應為「${PROFILE.unit}」。`;
     if (i.code === "WEEKLY_HOURS_EXCEEDED") {
       const first = entries.filter((e) => i.entryIds?.includes(e.id) && e.date).map((e) => e.date).sort()[0];
       if (first) i.message = i.message.replace(/^\S+ 在這份文件中/, `${weekKey(first)}`);
