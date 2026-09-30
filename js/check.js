@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20260930f";
+import { checkTimesheet } from "./rules.js?v=20260930g";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -45,22 +45,23 @@ function minutes(value) {
   return m ? Number(m[1]) * 60 + Number(m[2]) : null;
 }
 
-// 日期一律補上星期，例如 11/12(四)，方便對照月曆計算
+// 星期對照：用來檢查學生在日期欄寫的星期對不對
 const WEEKDAY = "日一二三四五六";
 export function mdw(value) {
   const d = value instanceof Date ? value : new Date(`${value}T00:00:00`);
   if (Number.isNaN(d.getTime())) return String(value ?? "");
   return `${d.getMonth() + 1}/${d.getDate()}(${WEEKDAY[d.getDay()]})`;
 }
-export function withWeekdays(message) {
-  return String(message).replaceAll(/\d{4}-\d{2}-\d{2}/g, (iso) => mdw(iso));
+const md = (value) => { const d = value instanceof Date ? value : new Date(`${value}T00:00:00`); return `${d.getMonth() + 1}/${d.getDate()}`; };
+export function withMonthDay(message) {
+  return String(message).replaceAll(/\d{4}-\d{2}-\d{2}/g, (iso) => md(iso));
 }
 
 function weekKey(iso) {
   const d = new Date(`${iso}T00:00:00`);
   const monday = new Date(d);
   monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-  return `${mdw(monday)} 那一週`;
+  return `${md(monday)} 那一週`;
 }
 
 export const ROLES = {
@@ -89,7 +90,7 @@ export function checkInnovation(sheet, options = {}) {
       const first = entries.filter((e) => i.entryIds?.includes(e.id) && e.date).map((e) => e.date).sort()[0];
       if (first) i.message = i.message.replace(/^\S+ 在這份文件中/, `${weekKey(first)}`);
     }
-    i.message = withWeekdays(i.message);
+    i.message = withMonthDay(i.message);
   }
   const extra = [];
 
@@ -108,7 +109,7 @@ export function checkInnovation(sheet, options = {}) {
 
   if (isTA && options.insuredFrom) {
     const early = entries.filter((e) => e.date && e.date < options.insuredFrom);
-    if (early.length) extra.push(issue("BEFORE_INSURANCE", "error", `有工作日期早於保險生效日（${mdw(options.insuredFrom)}）。保險生效前不能開始工作。`, early.map((e) => e.id), "date"));
+    if (early.length) extra.push(issue("BEFORE_INSURANCE", "error", `有工作日期早於保險生效日（${md(options.insuredFrom)}）。保險生效前不能開始工作。`, early.map((e) => e.id), "date"));
   }
 
   const foreign = sheet.foreign || options.foreign;
