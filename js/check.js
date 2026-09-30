@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20260930h";
+import { checkTimesheet } from "./rules.js?v=20260930i";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -109,10 +109,10 @@ export function checkInnovation(sheet, options = {}) {
     if (other.length) extra.push(issue("MONTH_MISMATCH", "error", `有工作日期不在表頭的 ${sheet.period.month} 月。每個月要分開填一張簽到單。`, other.map((e) => e.id), "date"));
   }
 
-  // 硬性規定（Lupin 2026-09-30）：TA 一律從 10/7 開始工作，10/7 以前不能排
+  // 硬性規定（Lupin 2026-09-30）：TA 每個人都是 10/7 投保、10/7 開始工作，10/7 以前不能排
   if (isTA) {
     const tooEarly = entries.filter((e) => e.date && e.date < TA_START_DATE);
-    if (tooEarly.length) extra.push(issue("TA_START_DATE", "error", `TA 一律從 ${md(TA_START_DATE)} 開始工作，${md(TA_START_DATE)} 以前不能排工作。`, tooEarly.map((e) => e.id), "date"));
+    if (tooEarly.length) extra.push(issue("TA_START_DATE", "error", `TA 保險一律從 ${md(TA_START_DATE)} 生效，第一天工作是 ${md(TA_START_DATE)}，${md(TA_START_DATE)} 以前不能排工作。`, tooEarly.map((e) => e.id), "date"));
   }
 
   if (isTA && options.insuredFrom) {

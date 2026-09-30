@@ -1,7 +1,7 @@
 // 簽到單解析：沿用 signin-checker 的 DOCX 解析，另外支援學校原始的 ODT 表單
-import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20260930h";
-import { footerSignature, personalValue } from "./fields.js?v=20260930h";
-import { inferPeriod } from "./period.js?v=20260930h";
+import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20260930i";
+import { footerSignature, personalValue } from "./fields.js?v=20260930i";
+import { inferPeriod } from "./period.js?v=20260930i";
 
 function decodeXml(value) {
   return value
