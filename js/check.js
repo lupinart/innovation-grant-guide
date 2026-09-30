@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20260930j";
+import { checkTimesheet } from "./rules.js?v=20260930k";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -150,12 +150,17 @@ export function checkInnovation(sheet, options = {}) {
     extra.push(issue("WEEKDAY_WRONG", "error", `${Number(e.date.slice(5, 7))}/${Number(e.date.slice(8))} 是星期${actual}，不是星期${written}。`, [e.id], "date"));
   }
 
-  // 網頁只寫「正常工作時間」，簽到單檢查才抓 7:00 前、20:00 後
+  // 網頁只寫「正常工作時間」，簽到單檢查才抓 7:00 前、20:00 後（紅）；18:00 後不建議（黃）
   const offHours = entries.filter((e) => {
     const s = minutes(e.start), t = minutes(e.end);
     return s !== null && t !== null && (s < 7 * 60 || t > 20 * 60);
   });
   if (offHours.length) extra.push(issue("OFF_HOURS", "error", "有工作時間在早上 7 點以前或晚上 8 點以後，請改到正常工作時間。", offHours.map((e) => e.id), "time"));
+  const lateHours = entries.filter((e) => {
+    const t = minutes(e.end);
+    return !offHours.includes(e) && t !== null && t > 18 * 60;
+  });
+  if (lateHours.length) extra.push(issue("LATE_HOURS", "review", "工讀不建議超過晚上 6 點，請再確認是否需要排到這麼晚。", lateHours.map((e) => e.id), "time"));
 
   // 簽名一律用黃框提醒本人列印後親筆簽
   if (entries.length) extra.push(issue("SIGN_HERE", "review", "列印後，每一列的簽章欄都要本人親筆簽名（Word 裡打字的簽名不算）。", entries.map((e) => e.id), "signature"));
