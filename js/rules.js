@@ -107,7 +107,21 @@ function addLocationIssues(item, profile, issues) {
         entryIds: [item.id], field: "location"
       }));
     }
-    if (config.requireRoom && !/\d{2,4}[A-Za-z]?/.test(location)) {
+    // 有大樓名單時：一定要寫得出是哪一棟，且要有教室／研究室號碼（「校內教室」「研究室」這類模糊寫法直接退）
+    const buildings = config.buildings ?? [];
+    if (buildings.length && !forbidden) {
+      const building = buildings.find((name) => location.includes(name));
+      const noRoomNeeded = (config.noRoomNeeded ?? []).some((name) => location.includes(name));
+      if (!building) {
+        issues.push(makeIssue("LOCATION_BUILDING_UNKNOWN", SEVERITY.error, "看不出是校內哪一棟。請寫大樓名稱＋教室或研究室號碼，例如「電學大樓 301」，不要只寫「校內」「教室」「研究室」。", {
+          entryIds: [item.id], field: "location"
+        }));
+      } else if (!noRoomNeeded && !/\d{2,4}/.test(location)) {
+        issues.push(makeIssue("ROOM_REQUIRED", SEVERITY.error, `請補上教室或研究室號碼，例如「${building} 301」。`, {
+          entryIds: [item.id], field: "location"
+        }));
+      }
+    } else if (config.requireRoom && !/\d{2,4}[A-Za-z]?/.test(location)) {
       issues.push(makeIssue("ROOM_REQUIRED", SEVERITY.error, "請寫出實際研究室名稱與房號，不要只寫學校或研究室。", {
         entryIds: [item.id], field: "location"
       }));
