@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20260930e";
+import { checkTimesheet } from "./rules.js?v=20260930f";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
@@ -123,6 +123,22 @@ export function checkInnovation(sheet, options = {}) {
     for (const [k, [m, ids]] of weeks) {
       if (m > 20 * 60) extra.push(issue("FOREIGN_WEEKLY", "error", `外籍生每週最多 20 小時，${k}合計 ${Math.round(m / 6) / 10} 小時。`, ids, "date"));
     }
+  }
+
+  // 日期欄要由學生自己寫上星期，例如 11/12(四)，承辦核對比較快
+  const noWeekday = [], wrongWeekday = [];
+  for (const e of entries) {
+    if (!e.date) continue;
+    const written = /[（(]\s*(?:星期|週|周)?\s*([一二三四五六日天])\s*[)）]/.exec(e.dateText ?? "");
+    if (!written) { noWeekday.push(e); continue; }
+    const actual = WEEKDAY[new Date(`${e.date}T00:00:00`).getDay()];
+    if ((written[1] === "天" ? "日" : written[1]) !== actual) wrongWeekday.push([e, actual, written[1]]);
+  }
+  if (noWeekday.length) {
+    extra.push(issue("WEEKDAY_MISSING", "error", `工作日期要寫上星期，例如「${mdw(noWeekday[0].date)}」。`, noWeekday.map((e) => e.id), "date"));
+  }
+  for (const [e, actual, written] of wrongWeekday) {
+    extra.push(issue("WEEKDAY_WRONG", "error", `${Number(e.date.slice(5, 7))}/${Number(e.date.slice(8))} 是星期${actual}，不是星期${written}。`, [e.id], "date"));
   }
 
   // 網頁只寫「正常工作時間」，簽到單檢查才抓 7:00 前、20:00 後
