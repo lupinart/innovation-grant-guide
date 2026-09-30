@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20260930a";
-import { checkInnovation, ROLES } from "./check.js?v=20260930a";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20260930a";
+import { parseTimesheet } from "./parse.js?v=20260930b";
+import { checkInnovation, ROLES } from "./check.js?v=20260930b";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20260930b";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -261,7 +261,7 @@ function renderSheet(item) {
     </div>
     ${notes.length
       ? `<ul class="issues">${notes.map((i) => `<li><button class="num" data-sev="${i.severity}" data-focus="${item.id}:${i.number}" title="在簽到單上找到這一處">${i.number}</button><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${rowsLabel(i.entryIds)}${esc(i.message)}</span></li>`).join("")}</ul>`
-      : `<div class="allgood">沒有發現需要修正的地方</div>`}
+      : `<div class="allgood">沒有發現需要修正的地方。網頁只能幫忙抓常見錯誤，送出前請再對著簽到單自己看一次。</div>`}
     <figure class="doc-fig"><figcaption>簽到單上有編號框線的地方，就是要改或要確認的位置</figcaption><div class="doc-view" id="doc-${item.id}"></div></figure>
     <div class="decl"><b>送出前請自己確認：</b>${r.declarations.map((d, n) => `<label><input type="checkbox" id="d-${item.id}-${n}"> ${esc(d.label)}</label>`).join("")}</div>
   </div>`;
@@ -280,7 +280,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20260930a").then(() => loadScript("js/vendor/docx-preview.min.js?v=20260930a")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20260930b").then(() => loadScript("js/vendor/docx-preview.min.js?v=20260930b")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
