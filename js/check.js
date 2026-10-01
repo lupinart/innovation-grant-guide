@@ -1,5 +1,5 @@
 // 創新應用補助 TA 簽到單的檢查規則：共通規則沿用 signin-checker 的 rules.js，這裡補上本專案特有的比對
-import { checkTimesheet } from "./rules.js?v=20261001s";
+import { checkTimesheet } from "./rules.js?v=20261001u";
 
 export const PROFILE = {
   planName: "A82 發展雲端知識體系計畫",
