@@ -266,3 +266,119 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .issues .num{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:0;background:#c0392b;color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
 .issues .num[data-sev="review"]{background:#f2c200;color:#1d2a33}
 .ins-due{flex-basis:100%;font-size:.92rem}
+
+/* ===== 2026-10-01 版面細修（只動樣式，不動內容） ===== */
+/* 首頁：單數張卡片時，最後一張跨滿兩欄，不留空格 */
+.cards>.card:last-child:nth-child(odd){grid-column:1 / -1}
+/* 標題與說明換行不留單字孤行 */
+.card .q,.card .s,.lede,.note,.panel h3,.big{text-wrap:pretty}
+.card .q{text-wrap:pretty}
+/* 卡片微互動：浮起＋陰影、箭頭往右推 */
+.card{transition:border-color .2s,transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s}
+.card:hover{box-shadow:0 6px 18px -8px rgb(31 95 122 / .35)}
+.card .go{transition:transform .2s cubic-bezier(.2,.7,.3,1)}
+.card:hover .go{transform:translateX(4px)}
+.card:active{transform:translateY(0);box-shadow:none}
+/* 演講頁：餐費框內強調字不要被放大成標題 */
+.bind-box span b{font-family:inherit;font-size:inherit;color:var(--accent)}
+/* 回總覽按鈕點擊範圍加大（外觀位置不變） */
+.back{padding:8px 0;margin-block:-4px}
+.back:hover{text-decoration:underline;text-underline-offset:4px}
+/* 下載鈕、身分鈕按下回饋 */
+.file a,.step-dl,.role-btn,.chip,.seg button{transition:background-color .15s,border-color .15s,transform .1s}
+.file a:active,.step-dl:active,.role-btn:active,.chip:active{transform:scale(.97)}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+/* 連續兩組表單時，「看全部附件」只留最後一個 */
+.dl:has(+ .dl) .dl-all{display:none}
+/* 切換頁面時淡入 */
+.wrap>section:not([hidden]){animation:view-in .28s cubic-bezier(.2,.7,.3,1)}
+@keyframes view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .wrap>section:not([hidden]){animation:none}
+  .card .go,.card:hover .go{transition:none;transform:none}
+  .file a:active,.step-dl:active,.role-btn:active,.chip:active{transform:none}
+}
+/* 時間軸說明字寬一點，避免括號內斷行 */
+.tl-lab .ww{word-break:keep-all}
+.tl-lab.c{width:13em}
+/* 步驟與清單文字換行不留單字 */
+.steps li>span,ul.clean li,.file .d,dl.kv dd{text-wrap:pretty}
+
+/* ===== 2026-10-01 視覺升級（只動樣式，不動內容） ===== */
+/* 分類色：請學生／報帳／演講活動／表單 */
+:root{--c-people:#2f7a5f;--c-money:#1f5f7a;--c-event:#a0621a;--c-files:#6a4c93;--hero-a:#1f5f7a;--hero-b:#163f52;--hero-ink:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--c-people:#7fcfb0;--c-money:#7cc0da;--c-event:#e6b06a;--c-files:#b9a0e0;--hero-a:#1e4a5e;--hero-b:#14303d;--hero-ink:#eef5f7}}
+:root[data-theme="dark"]{--c-people:#7fcfb0;--c-money:#7cc0da;--c-event:#e6b06a;--c-files:#b9a0e0;--hero-a:#1e4a5e;--hero-b:#14303d;--hero-ink:#eef5f7}
+#v-people,#v-check,.card[href="#people"],.card[href="#check"]{--c:var(--c-people)}
+#v-items,#v-receipt,#v-submit,.card[href="#items"],.card[href="#receipt"],.card[href="#submit"]{--c:var(--c-money)}
+#v-event,.card[href="#event"]{--c:var(--c-event)}
+#v-files,.card[href="#files"]{--c:var(--c-files)}
+
+/* 首頁開場：主色色塊 */
+#v-home>header{position:relative;overflow:hidden;padding:clamp(28px,6vw,52px) clamp(22px,5vw,44px);border-radius:16px;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--hero-ink);gap:12px!important}
+#v-home>header::after{content:"";position:absolute;right:-60px;top:-80px;width:280px;height:280px;border-radius:50%;border:40px solid rgb(255 255 255 / .07);pointer-events:none}
+#v-home>header::before{content:"";position:absolute;right:90px;bottom:-70px;width:140px;height:140px;border-radius:50%;background:rgb(255 255 255 / .05);pointer-events:none}
+#v-home>header .eyebrow{color:var(--hero-ink);opacity:.75}
+#v-home>header h1{font-size:clamp(1.9rem,5.2vw,3rem);letter-spacing:.01em;max-width:14em}
+#v-home>header .lede{color:var(--hero-ink);opacity:.85}
+
+/* 問題卡：編號、圖示、分類色 */
+.cards{counter-reset:card;gap:16px}
+.card{position:relative;padding:24px 24px 20px;border-radius:14px;box-shadow:inset 0 4px 0 var(--c,var(--accent))}
+.card .q::before{counter-increment:card;content:counter(card,decimal-leading-zero);display:block;margin-bottom:6px;font-family:var(--body);font-size:.78rem;font-weight:700;letter-spacing:.14em;color:var(--c,var(--accent))}
+.card .q{padding-right:44px}
+.card::after{content:"";position:absolute;top:22px;right:22px;width:30px;height:30px;background:var(--c,var(--accent));opacity:.9;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+.card .go{color:var(--c,var(--accent))}
+.card:hover{border-color:var(--c,var(--accent));box-shadow:inset 0 4px 0 var(--c,var(--accent)),0 10px 24px -12px rgb(0 0 0 / .3)}
+.card:active{box-shadow:inset 0 4px 0 var(--c,var(--accent))}
+.card[href="#people"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='8' r='3.5'/%3E%3Cpath d='M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5'/%3E%3Ccircle cx='17' cy='9' r='2.6'/%3E%3Cpath d='M16.5 14.6c2.6.2 4.3 1.9 5 4.9'/%3E%3C/svg%3E")}
+.card[href="#items"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m15.5 15.5 5 5'/%3E%3Cpath d='M8 10.5l2 2 3.5-4'/%3E%3C/svg%3E")}
+.card[href="#receipt"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h14v18l-2.5-1.5L14 21l-2-1.5L10 21l-2.5-1.5L5 21z'/%3E%3Cpath d='M8.5 8h7M8.5 12h7M8.5 16h4'/%3E%3C/svg%3E")}
+.card[href="#submit"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='4' width='14' height='17' rx='2'/%3E%3Cpath d='M9 4V2.8h6V4'/%3E%3Cpath d='M8.5 10h7M8.5 14h7M8.5 18h4'/%3E%3C/svg%3E")}
+.card[href="#event"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2.5' width='6' height='11' rx='3'/%3E%3Cpath d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v4M8.5 21.5h7'/%3E%3C/svg%3E")}
+.card[href="#check"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2.5V8h5.5'/%3E%3Cpath d='m8.5 14.5 2.5 2.5 4.5-5'/%3E%3C/svg%3E")}
+.card[href="#files"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12M7 10.5l5 5 5-5'/%3E%3Cpath d='M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17'/%3E%3C/svg%3E")}
+
+/* 內頁標題帶 */
+.wrap>section:not(#v-home)>header{padding:22px 24px;border-radius:14px;border-left:5px solid var(--c,var(--accent));background:color-mix(in srgb,var(--c,var(--accent)) 10%,var(--surface));gap:8px!important}
+.wrap>section:not(#v-home)>header .eyebrow{color:var(--c,var(--accent));font-weight:700}
+.wrap>section:not(#v-home)>header h2{font-size:clamp(1.5rem,3.6vw,2rem)}
+.back{color:var(--c,var(--accent))}
+/* 內頁小標題前加色條 */
+.wrap>section>h2{display:flex;align-items:center;gap:12px;font-size:1.5rem}
+.wrap>section>h2::before{content:"";flex:none;width:6px;height:1.1em;border-radius:3px;background:var(--c,var(--accent))}
+
+/* 重點數字放大 */
+.rate{font-family:var(--display);font-size:clamp(2.2rem,5vw,2.8rem);line-height:1.1;color:var(--c,var(--accent))}
+.rate small{font-family:var(--body)}
+.taxid .num{font-size:clamp(2rem,5vw,2.6rem)}
+.check3 .big{font-size:1.15rem;color:var(--c,var(--accent))}
+.who h3{font-size:1.3rem}
+.panel{border-radius:12px}
+
+/* 手機：RA／TA 欄位改成標題在上、說明在下 */
+@media (max-width:640px){
+  dl.kv{grid-template-columns:1fr;gap:2px}
+  dl.kv dt{font-size:.82rem;font-weight:700;letter-spacing:.04em;color:var(--c,var(--muted))}
+  dl.kv dd{margin-bottom:10px}
+  .card::after{top:20px;right:20px;width:26px;height:26px}
+}
+/* 下載鈕、連結跟著該頁分類色 */
+.file a,.step-dl{border-color:var(--c,var(--accent));color:var(--c,var(--accent))}
+.file a:hover,.step-dl:hover{background:color-mix(in srgb,var(--c,var(--accent)) 12%,transparent)}
+.dl-all{color:var(--c,var(--accent))}
+.card{box-shadow:inset 0 3px 0 var(--c,var(--accent))}
+.card:hover{box-shadow:inset 0 3px 0 var(--c,var(--accent)),0 10px 24px -12px rgb(0 0 0 / .3)}
+.card:active{box-shadow:inset 0 3px 0 var(--c,var(--accent))}
+/* 標題只在標點斷行，不把詞拆開 */
+.card .q,.wrap>section>header h2,#v-home>header h1{word-break:keep-all;overflow-wrap:anywhere}
+/* 步驟編號、綁定框也跟著分類色 */
+.steps li::before{color:var(--c,var(--accent));border-color:var(--c,var(--accent))}
+.bind{border-color:var(--c,var(--accent));background:color-mix(in srgb,var(--c,var(--accent)) 10%,var(--surface))}
+.bind-box b,.bind-box span b{color:var(--c,var(--accent))}
+.bind-link::before{border-color:var(--c,var(--accent))}
+.bind-link span{background:var(--c,var(--accent))}
+/* 底部：回總覽＋看全部附件同一行 */
+.page-end{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.page-end .back-end{margin-top:0}
+.page-end .dl-all{align-self:auto}

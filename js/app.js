@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20261001o";
-import { checkInnovation, ROLES } from "./check.js?v=20261001o";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001o";
+import { parseTimesheet } from "./parse.js?v=20261001p";
+import { checkInnovation, ROLES } from "./check.js?v=20261001p";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001p";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -165,7 +165,15 @@ $("#file-list").innerHTML = FILES.map(fileRow).join("");
 // 各頁的相關附件：data-files 用檔名開頭的編號（例如 "05 06-2"）
 document.querySelectorAll(".dl[data-files]").forEach((box) => {
   const rows = box.dataset.files.split(" ").map((code) => FILES.find(([path]) => path.startsWith(code + "-"))).filter(Boolean);
-  box.innerHTML = `<span class="big">${box.dataset.title}</span><div class="files">${rows.map(fileRow).join("")}</div><a class="dl-all" href="#files">看全部附件 →</a>`;
+  box.innerHTML = `<span class="big">${box.dataset.title}</span><div class="files">${rows.map(fileRow).join("")}</div>`;
+});
+// 每頁底部：「回總覽」靠左、「看全部附件」靠右，排在同一行
+document.querySelectorAll(".back-end").forEach((back) => {
+  const row = document.createElement("div");
+  row.className = "page-end";
+  back.replaceWith(row);
+  row.append(back);
+  if (row.parentElement.querySelector(".dl")) row.insertAdjacentHTML("beforeend", `<a class="dl-all" href="#files">看全部附件 →</a>`);
 });
 
 /* ---------- 簽到單檢查 ---------- */
@@ -290,7 +298,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001o").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001o")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001p").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001p")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
