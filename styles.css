@@ -389,5 +389,7 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .wrap>section:not(#v-home)>header{position:relative;border-left:0;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--hero-ink);padding:24px 76px 24px 26px}
 .wrap>section:not(#v-home)>header .eyebrow{color:var(--hero-ink);opacity:.75}
 .wrap>section:not(#v-home)>header h2{color:var(--hero-ink)}
+.wrap>section:not(#v-home)>header .lede{color:var(--hero-ink);opacity:.88}
+.wrap>section:not(#v-home)>header .lede b{color:var(--hero-ink)}
 .wrap>section:not(#v-home)>header::after{content:"";position:absolute;top:50%;right:24px;width:40px;height:40px;transform:translateY(-50%);background:var(--hero-ink);opacity:.9;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat;pointer-events:none}
 @media (max-width:640px){.wrap>section:not(#v-home)>header::after{top:22px;right:20px;width:32px;height:32px;transform:none}.wrap>section:not(#v-home)>header{padding-right:64px}}
