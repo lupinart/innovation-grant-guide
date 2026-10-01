@@ -85,7 +85,8 @@ function addPersonalInfoIssues(sheet, issues) {
 }
 
 function addLocationIssues(item, profile, issues) {
-  const location = text(item.location);
+  // 全形數字（例如「圖書館１０１室」）先轉半形再判斷
+  const location = text(item.location).normalize("NFKC");
   const config = profile.location ?? {};
   if (!location) {
     issues.push(makeIssue("LOCATION_REQUIRED", SEVERITY.error, "工作地點未填寫，請填入實際工作地點。", {
