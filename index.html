@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261001m">
+<link rel="stylesheet" href="styles.css?v=20261001n">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -200,6 +200,8 @@
         <li>品名是英文或編號時，經手人要逐項寫上中文品名並簽名</li>
         <li>電子發票漏打統編：用原子筆補寫統編，再請店家補蓋發票章</li>
       </ul>
+      <div class="figure"><img src="img/receipt-einvoice.jpg" alt="網購電子發票證明聯範例：上方購物清單列出品名、數量、單價、金額，下方電子發票證明聯印有買方統編 45002502" width="800" height="767"></div>
+      <p class="privacy" style="text-align:center">網購電子發票：買方印有統編 45002502，品名、數量、單價、金額都看得到。下載列印後，經手人要簽名。</p>
     </div>
     <div class="panel">
       <h3>免用統一發票收據</h3>
@@ -208,15 +210,6 @@
         <li>收據章沒有統編，請店家補填店家統編；沒有負責人姓名，請店家補蓋負責人章</li>
         <li>金額大寫寫錯要請店家重開，不能塗改</li>
       </ul>
-    </div>
-  </div>
-  <h2 style="margin-top:12px">實際範例</h2>
-  <div class="compare">
-    <div class="stack" style="gap:8px">
-      <div class="figure"><img src="img/receipt-einvoice.jpg" alt="網購電子發票證明聯範例：上方購物清單列出品名、數量、單價、金額，下方電子發票證明聯印有買方統編 45002502" width="800" height="767"></div>
-      <p class="privacy" style="text-align:center">網購電子發票：買方印有統編 45002502，品名、數量、單價、金額都看得到。下載列印後，經手人要簽名。</p>
-    </div>
-    <div class="stack" style="gap:8px">
       <div class="figure"><img src="img/receipt-lunchbox.jpg" alt="免用統一發票收據範例：買受人中原大學，品名便當、數量 23、單價 120、總價 2,760，蓋有店家收據專用章與負責人章" width="800" height="547"></div>
       <p class="privacy" style="text-align:center">免用統一發票收據：買受人寫中原大學，有品名、數量、單價、總價和國字大寫金額，蓋店家章。</p>
     </div>
@@ -367,6 +360,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20261001m"></script>
+<script type="module" src="js/app.js?v=20261001n"></script>
 </body>
 </html>
