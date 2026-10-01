@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20261001r";
-import { checkInnovation, ROLES } from "./check.js?v=20261001r";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001r";
+import { parseTimesheet } from "./parse.js?v=20261001s";
+import { checkInnovation, ROLES } from "./check.js?v=20261001s";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001s";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -298,7 +298,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001r").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001r")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001s").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001s")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

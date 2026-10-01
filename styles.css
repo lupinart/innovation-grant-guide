@@ -371,7 +371,8 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .card:hover{box-shadow:inset 0 3px 0 var(--c,var(--accent)),0 10px 24px -12px rgb(0 0 0 / .3)}
 .card:active{box-shadow:inset 0 3px 0 var(--c,var(--accent))}
 /* 標題只在標點斷行，不把詞拆開 */
-.card .q,.wrap>section>header h2,#v-home>header h1{word-break:keep-all;overflow-wrap:anywhere}
+.card .q,.wrap>section>header h2{word-break:keep-all;overflow-wrap:anywhere}
+#v-home>header h1{text-wrap:balance}
 /* 步驟編號、綁定框也跟著分類色 */
 .steps li::before{color:var(--c,var(--accent));border-color:var(--c,var(--accent))}
 .bind{border-color:var(--c,var(--accent));background:color-mix(in srgb,var(--c,var(--accent)) 10%,var(--surface))}
@@ -382,3 +383,4 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .page-end{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
 .page-end .back-end{margin-top:0}
 .page-end .dl-all{align-self:auto}
+#v-home>header .lede{text-wrap:wrap}
