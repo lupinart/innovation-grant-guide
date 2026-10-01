@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20261001h";
-import { checkInnovation, ROLES } from "./check.js?v=20261001h";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001h";
+import { parseTimesheet } from "./parse.js?v=20261001i";
+import { checkInnovation, ROLES } from "./check.js?v=20261001i";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001i";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -22,7 +22,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncToggle
 syncToggle();
 
 /* ---------- 分頁 ---------- */
-const VIEWS = ["home", "people", "items", "receipt", "submit", "check", "files"];
+const VIEWS = ["home", "people", "items", "receipt", "submit", "event", "check", "files"];
 function show() {
   const h = location.hash.slice(1);
   const v = VIEWS.includes(h) ? h : "home";
@@ -145,7 +145,9 @@ const FILES = [
   ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
   ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
   ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
-  ["08-expense-detail.doc", "08_支出明細表.doc", "08　支出明細表", "每筆報帳都要附，教學用途說明至少 50 字。"]
+  ["08-expense-detail.doc", "08_支出明細表.doc", "08　支出明細表", "每筆報帳都要附，教學用途說明至少 50 字。"],
+  ["speaker-receipt.docx", "講員領款收據_115-1.docx", "講員領款收據", "請講員演講時使用，同時要附活動紀錄（附件 6-4）。"],
+  ["remittance-authorization.doc", "中原大學支付款項匯款委託書(1150610新版).doc", "匯款委託書（新版）", "講員第一次來、還沒在中原領過錢時要填，並附存摺封面影本。"]
 ];
 const fileRow = ([path, name, title, desc]) => {
   const ext = path.split(".").pop().toUpperCase();
@@ -280,7 +282,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001h").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001h")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001i").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001i")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

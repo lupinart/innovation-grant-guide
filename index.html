@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261001h">
+<link rel="stylesheet" href="styles.css?v=20261001i">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -36,6 +36,7 @@
     <a class="card" href="#items"><span class="q">這個東西能不能報？</span><span class="s">輸入品名，直接查可報、不可報與原因。</span><span class="go">查品項 →</span></a>
     <a class="card" href="#receipt"><span class="q">付完錢，收據要長怎樣？</span><span class="s">ChatGPT、Gemini 等線上平台，以及發票、收據的規則。</span><span class="go">看範例 →</span></a>
     <a class="card" href="#submit"><span class="q">報帳要附什麼？用途怎麼寫？</span><span class="s">支出明細表（08）怎麼填、用途說明的正確寫法。</span><span class="go">看寫法 →</span></a>
+    <a class="card" href="#event"><span class="q">我要辦演講，講員費和餐費怎麼報？</span><span class="s">講員費標準、餐費限制，以及兩樣要分開送的文件。</span><span class="go">看規定 →</span></a>
     <a class="card" href="#check"><span class="q">簽到單送出前檢查</span><span class="s">給擔任 RA、TA 的同學使用：上傳自己的簽到單電子檔，自動找出算錯、漏填的地方。</span><span class="go">上傳檢查 →</span></a>
     <a class="card" href="#files"><span class="q">附件下載</span><span class="s">合意書、投保資訊表、簽到單、支出明細表等所有表單。</span><span class="go">下載表單 →</span></a>
   </nav>
@@ -203,12 +204,24 @@
       <h3>免用統一發票收據</h3>
       <ul class="clean">
         <li>抬頭：中原大學</li>
-        <li>右上角統編欄<b>不要</b>填學校統編</li>
         <li>收據章沒有統編，請店家補填店家統編；沒有負責人姓名，請店家補蓋負責人章</li>
         <li>金額大寫寫錯要請店家重開，不能塗改</li>
       </ul>
     </div>
   </div>
+  <h2 style="margin-top:12px">實際範例</h2>
+  <div class="compare">
+    <div class="stack" style="gap:8px">
+      <div class="figure"><img src="img/receipt-einvoice.jpg" alt="網購電子發票證明聯範例：上方購物清單列出品名、數量、單價、金額，下方電子發票證明聯印有買方統編 45002502" width="800" height="767"></div>
+      <p class="privacy" style="text-align:center">網購電子發票：買方印有統編 45002502，品名、數量、單價、金額都看得到。下載列印後，經手人要簽名。</p>
+    </div>
+    <div class="stack" style="gap:8px">
+      <div class="figure"><img src="img/receipt-lunchbox.jpg" alt="免用統一發票收據範例：買受人中原大學，品名便當、數量 23、單價 120、總價 2,760，蓋有店家收據專用章與負責人章" width="800" height="547"></div>
+      <p class="privacy" style="text-align:center">免用統一發票收據：買受人寫中原大學，有品名、數量、單價、總價和國字大寫金額，蓋店家章。</p>
+    </div>
+  </div>
+  <p class="privacy" style="text-align:center">範例取自往年核銷資料，已遮蔽部分資訊。</p>
+
   <div class="dl" data-files="06-1" data-title="完整規定"></div>
   <div class="note"><b>時間提醒：</b>拿到發票或收據後，請在 <b>2 週內</b>送來核銷。超過的話，要在憑證上寫明延遲原因。校內單位開的收據不能報。</div>
 </section>
@@ -247,16 +260,51 @@
     <p style="color:var(--muted)">範例：</p>
     <p>項目名稱：簡報筆 1 支<br>用途說明：用於「○○設計」課程的翻轉教學。學生分組上台報告時，由學生自行操作簡報筆切換投影片與標示重點，讓每組都能在時限內完成展示，老師可以同步在台下記錄與回饋。</p>
   </div>
-  <h2 style="margin-top:12px">辦演講：講員費和餐費綁在一起</h2>
+  <p class="lede">辦演講的講員費和餐費，請看<a href="#event">「我要辦演講，講員費和餐費怎麼報？」</a>。</p>
+  <div class="dl" data-files="08 06-1 06-5" data-title="這一頁會用到的表單"></div>
+  <div class="note"><b>送出之後：</b>核銷送出 2～3 週後，請到會計系統確認是否已審核。一直沒有審核，可能是單據遺失，請盡快聯絡。</div>
+</section>
+
+<!-- ========== 演講：講員費與餐費 ========== -->
+<section id="v-event" class="stack" hidden>
+  <button class="back" data-home>← 回總覽</button>
+  <header class="stack" style="gap:6px">
+    <div class="eyebrow">我要辦演講，講員費和餐費怎麼報？</div>
+    <h2>講員費和餐費綁在一起</h2>
+  </header>
   <div class="bind" role="note" aria-label="演講與餐費綁定">
     <div class="bind-box"><span class="eyebrow">演講活動</span><b>講員費</b><span>最多 2 次、合計 3 小時以內</span></div>
     <div class="bind-link"><span>必須一起</span></div>
     <div class="bind-box"><span class="eyebrow">同一場演講</span><b>餐費</b><span>每人最多 120 元；演講時間要<b>包含 12:30 左右</b></span></div>
     <p class="bind-rule"><b>沒有演講，就不能報餐費。</b>演講時間也要包含 12:30 左右的用餐時間，才能報餐費。餐費不能單獨報，線上活動不提供餐點。</p>
   </div>
-  <p class="lede">報帳時講員費和餐費要分開送，並附上活動紀錄（附件 6-4）。</p>
-  <div class="dl" data-files="08 06-1 06-4 06-5" data-title="這一頁會用到的表單"></div>
-  <div class="note"><b>送出之後：</b>核銷送出 2～3 週後，請到會計系統確認是否已審核。一直沒有審核，可能是單據遺失，請盡快聯絡。</div>
+
+  <h2 style="margin-top:12px">講員費</h2>
+  <p class="lede">講員都不能另外報交通費。</p>
+  <ol class="steps panel">
+    <li><span><b>講員領款收據</b>：金額空白處寫計算方式。</span></li>
+    <li><span><b>匯款委託書（新版）</b>：講員第一次來、還沒在中原領過錢時要填，並附存摺封面影本。</span></li>
+    <li><span><b>活動紀錄（附件 6-4）</b>：附簽到單、活動照片，成效至少寫 50 字。</span></li>
+    <li><span><b>用途說明</b>：日期＋課程＋講題＋講者，20 字以內。例：9/18 人因工程_醫療輔具發展_○○○</span></li>
+    <li><span>外籍講員：附護照或居留證影本，並確認是否居留滿 183 天。</span></li>
+  </ol>
+
+  <h2 style="margin-top:12px">餐費</h2>
+  <ol class="steps panel">
+    <li><span>每人最多 <b>120 元</b>，只能給這場演講的老師、學生和講員。</span></li>
+    <li><span>不能報點心零食，不能用餐券，線上活動不提供餐點。</span></li>
+    <li><span>收據上的品名要跟店家實際賣的東西相符。</span></li>
+    <li><span>要附<b>收據</b>和<b>簽到表正本</b>。</span></li>
+  </ol>
+
+  <h2 style="margin-top:12px">怎麼送</h2>
+  <div class="panel">
+    <ul class="clean">
+      <li>講員費和餐費<b>分開送</b>。</li>
+      <li>不同場次的演講費也要分開送。</li>
+    </ul>
+  </div>
+  <div class="dl" data-files="06-1 speaker remittance 06-4" data-title="這一頁會用到的表單"></div>
 </section>
 
 <!-- ========== 簽到單檢查 ========== -->
@@ -319,6 +367,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20261001h"></script>
+<script type="module" src="js/app.js?v=20261001i"></script>
 </body>
 </html>
