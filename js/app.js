@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20260930k";
-import { checkInnovation, ROLES } from "./check.js?v=20260930k";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20260930k";
+import { parseTimesheet } from "./parse.js?v=20261001a";
+import { checkInnovation, ROLES } from "./check.js?v=20261001a";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001a";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -90,7 +90,7 @@ const ITEMS = [
   ["記憶卡", "ok", "電腦周邊"],
   ["筆、影印紙、迴紋針等文具", "ok", "教學相關才可以，不能私人用"],
   ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學；附刷卡明細與刷卡當天匯率表"],
-  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；收據上方要有老師姓名與 CYCU 信箱；附刷卡明細與刷卡當天匯率表"],
+  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；要附台灣電子統一發票＋收據（Google 付款中心下載），發票證明聯手寫學校統編並簽名；附刷卡明細"],
   ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用"],
   ["印刷、影印、大圖輸出", "warn", "1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
   ["海報、文宣、網站設計", "warn", "要附設計樣本"],
@@ -280,7 +280,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20260930k").then(() => loadScript("js/vendor/docx-preview.min.js?v=20260930k")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001a").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001a")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

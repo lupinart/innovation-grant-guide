@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20260930k">
+<link rel="stylesheet" href="styles.css?v=20261001a">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -154,24 +154,27 @@
     <div class="panel">
       <h3>Gemini（Google）</h3>
       <ul class="clean">
-        <li>Google 的收據通常沒辦法填學校名稱</li>
-        <li>會計室確認：收據上方有顯示<b>老師姓名</b>和<b>CYCU 信箱</b>，就可以當作使用者證明</li>
-        <li>所以請用 CYCU 信箱的帳號訂閱，付款日期、金額要清楚</li>
+        <li>一定要附<b>台灣電子統一發票</b>和該筆<b>收據</b>，兩樣都要</li>
+        <li>透過 Google One／Google Play 訂閱（Google AI Pro 等方案），Google 會開電子統一發票，寄到訂閱帳號的信箱</li>
+        <li>收據與發票也可以到 <b>Google 付款中心（pay.google.com）→「活動」→ 點該筆訂單</b> 查看、下載</li>
+        <li>電子發票上沒有學校統編：列印電子發票證明聯後，<b>手寫中原大學統編 45002502 並簽名</b></li>
+        <li><b>Google 帳戶的付款資料不要填學校統編</b>：填了統編，Google 就不會開台灣統一發票</li>
+        <li>付款日期、金額要清楚</li>
       </ul>
     </div>
   </div>
 
   <div class="panel taxid">
-    <span class="big">平台可以填統一編號的話，請填中原大學的統編</span>
+    <span class="big">平台可以填統一編號的話，請填中原大學的統編（Gemini 除外）</span>
     <span class="num">45002502</span>
-    <span class="privacy">通常在帳單資訊的 Tax ID、VAT、統一編號欄位。請逐字核對，填錯要請平台重開收據。</span>
+    <span class="privacy">通常在帳單資訊的 Tax ID、VAT、統一編號欄位。請逐字核對，填錯要請平台重開收據。Gemini 不要填，改在電子發票證明聯上手寫統編。</span>
   </div>
 
   <div class="figure"><img src="img/receipt-example.jpg" alt="ChatGPT 付款畫面範例：左邊的帳單（Invoice）打叉，右邊的收據（Receipt）打勾，收據上載明中原大學" width="575" height="483"></div>
   <p class="privacy" style="text-align:center">以 ChatGPT 為例。其他平台畫面不同，找「Receipt」或「收據」下載。</p>
 
   <div class="check3">
-    <div class="panel"><span class="big">1. 寫到學校或老師</span><span>載明中原大學（中、英文皆可）；填不了學校名稱的平台，要看得到老師姓名與 CYCU 信箱。</span></div>
+    <div class="panel"><span class="big">1. 寫到學校或老師</span><span>載明中原大學（中、英文皆可）；Gemini 這類開台灣電子發票的平台，在發票證明聯上手寫學校統編並簽名。</span></div>
     <div class="panel"><span class="big">2. 看得到付款日期</span><span>日期要落在 9–12 月的執行期間。</span></div>
     <div class="panel"><span class="big">3. 看得到金額</span><span>網路下載列印的收據，經手人要在上面簽名。</span></div>
   </div>
@@ -180,7 +183,7 @@
     <h3>用信用卡付款？再多附兩樣</h3>
     <ul class="clean">
       <li><b>刷卡明細</b>：一定要附上當筆的刷卡紀錄當佐證，沒附有機會被退件</li>
-      <li><b>外幣付款</b>（例如 ChatGPT、Gemini 用美元扣款）：另外附上<b>刷卡當天的匯率表</b></li>
+      <li><b>外幣付款</b>（例如 ChatGPT 用美元扣款；Gemini 在台灣以新台幣計價，不用附）：另外附上<b>刷卡當天的匯率表</b></li>
     </ul>
   </div>
 
@@ -318,6 +321,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20260930k"></script>
+<script type="module" src="js/app.js?v=20261001a"></script>
 </body>
 </html>
