@@ -1,6 +1,6 @@
-import { parseTimesheet } from "./parse.js?v=20261001l";
-import { checkInnovation, ROLES } from "./check.js?v=20261001l";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001l";
+import { parseTimesheet } from "./parse.js?v=20261001m";
+import { checkInnovation, ROLES } from "./check.js?v=20261001m";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001m";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -29,6 +29,14 @@ function show() {
   VIEWS.forEach((x) => { document.getElementById("v-" + x).hidden = x !== v; });
   window.scrollTo(0, 0);
 }
+// 每頁最下面也放一個回總覽
+VIEWS.filter((x) => x !== "home").forEach((x) => {
+  const b = document.createElement("button");
+  b.className = "back back-end";
+  b.dataset.home = "";
+  b.textContent = "← 回總覽";
+  document.getElementById("v-" + x).append(b);
+});
 document.querySelectorAll("[data-home]").forEach((b) => b.addEventListener("click", () => { location.hash = "home"; }));
 addEventListener("hashchange", show);
 show();
@@ -282,7 +290,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001l").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001l")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001m").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001m")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
