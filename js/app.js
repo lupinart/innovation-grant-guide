@@ -1,7 +1,7 @@
-import { parseTimesheet } from "./parse.js?v=20261002b";
-import { checkInnovation, ROLES } from "./check.js?v=20261002b";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002b";
-import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002b";
+import { parseTimesheet } from "./parse.js?v=20261002c";
+import { checkInnovation, ROLES } from "./check.js?v=20261002c";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002c";
+import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002c";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -101,7 +101,7 @@ const ITEMS = [
   ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學；附刷卡明細與刷卡當天匯率表"],
   ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；要有 Invoice 或 Receipt，上面要有中原大學和統編；附刷卡明細與刷卡當天匯率表"],
   ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用"],
-  ["印刷、影印、大圖輸出", "warn", "1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
+  ["印刷、影印、大圖輸出", "warn", "收據一定要寫數量和單價（例：影印 200 張 × 1 元）；1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
   ["海報、文宣、網站設計", "warn", "要附設計樣本"],
   ["碳粉匣", "warn", "原則上買一個，這項不受 2,999 元限制"],
   ["學生實作材料", "warn", "申請時要先編列預算；用途寫「學生實作-材料費」並附成品照片"],
@@ -354,7 +354,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002b").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002b")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002c").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002c")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

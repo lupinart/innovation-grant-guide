@@ -1,7 +1,7 @@
 // 個人領據（附件 6-2 支付個人款項領款收據）的解析與檢查
-import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20261002b";
-import { ROLES, PERIOD_MONTHS, PROFILE } from "./check.js?v=20261002b";
-import { checkTimesheet } from "./rules.js?v=20261002b";
+import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20261002c";
+import { ROLES, PERIOD_MONTHS, PROFILE } from "./check.js?v=20261002c";
+import { checkTimesheet } from "./rules.js?v=20261002c";
 
 function decodeXml(value) {
   return value

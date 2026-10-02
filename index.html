@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261002b">
+<link rel="stylesheet" href="styles.css?v=20261002c">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -145,6 +145,8 @@
     <p class="lede">平台如果同時有 Invoice 跟 Receipt，請下載 <b>Receipt（收據）</b>。Invoice 不能拿來核銷。軟體費只能報計畫執行月份（9–12 月）的費用。</p>
   </header>
 
+  <div class="note"><b>很重要：每一張發票、收據都一定要寫「數量」和「單價」。</b>影印也一樣，要寫印了幾張、每張多少錢（例如：影印 200 張 × 單價 1 元）。</div>
+
   <div class="method">
     <div class="panel">
       <h3>ChatGPT（OpenAI）</h3>
@@ -194,7 +196,7 @@
       <h3>統一發票</h3>
       <ul class="clean">
         <li>抬頭：中原大學，統編 <b style="font-variant-numeric:tabular-nums">45002502</b></li>
-        <li>要有日期、品名、單價、數量、合計金額（含國字大寫）</li>
+        <li>要有日期、品名、<b>數量、單價</b>、合計金額（含國字大寫）</li>
         <li>數量不能寫「一批」</li>
         <li>三聯式發票要附第二聯和第三聯</li>
         <li>品名是英文或編號時，經手人要逐項寫上中文品名並簽名</li>
@@ -207,6 +209,7 @@
       <h3>免用統一發票收據</h3>
       <ul class="clean">
         <li>抬頭：中原大學</li>
+        <li>要有品名、<b>數量、單價</b>、總價（含國字大寫）；影印也要寫張數和每張單價</li>
         <li>收據章沒有統編，請店家補填店家統編；沒有負責人姓名，請店家補蓋負責人章</li>
         <li>金額大寫寫錯要請店家重開，不能塗改</li>
       </ul>
@@ -362,6 +365,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20261002b"></script>
+<script type="module" src="js/app.js?v=20261002c"></script>
 </body>
 </html>
