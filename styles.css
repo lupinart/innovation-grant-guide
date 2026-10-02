@@ -393,3 +393,10 @@ td.bad{color:var(--no);text-decoration:line-through;text-decoration-thickness:1p
 .wrap>section:not(#v-home)>header .lede b{color:var(--hero-ink)}
 .wrap>section:not(#v-home)>header::after{content:"";position:absolute;top:50%;right:24px;width:40px;height:40px;transform:translateY(-50%);background:var(--hero-ink);opacity:.9;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat;pointer-events:none}
 @media (max-width:640px){.wrap>section:not(#v-home)>header::after{top:22px;right:20px;width:32px;height:32px;transform:none}.wrap>section:not(#v-home)>header{padding-right:64px}}
+
+/* 個人領據重畫 */
+.receipt-paper table{table-layout:auto}
+.receipt-paper th{width:auto;font-weight:600;background:#f3f5f6;white-space:nowrap}
+.receipt-paper td{height:2.4em;vertical-align:middle}
+.rc-f{display:inline-block;position:relative;min-width:2.6em;padding:0 4px;border-bottom:1px solid #1d2a33;text-align:center}
+.rc-wide{min-width:12em}

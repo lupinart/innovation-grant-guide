@@ -1,6 +1,7 @@
-import { parseTimesheet } from "./parse.js?v=20261001v";
-import { checkInnovation, ROLES } from "./check.js?v=20261001v";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261001v";
+import { parseTimesheet } from "./parse.js?v=20261002a";
+import { checkInnovation, ROLES } from "./check.js?v=20261002a";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002a";
+import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002a";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -148,8 +149,8 @@ const FILES = [
   ["04-budget-change.odt", "附件4_經費變更申請表.odt", "附件 4　經費變更申請表", "經費項目需要調整時填寫。"],
   ["05-ra-agreement.odt", "附件5_研究獎助生合意書.odt", "附件 5　研究獎助生合意書", "RA 用。一式三份、學生與老師親簽，紙本送 101A。"],
   ["06-1-reimbursement-rules.odt", "附件6-1_核銷注意要點.odt", "附件 6-1　核銷注意要點", "可報項目、應附文件、憑證規格的完整規定。"],
-  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA、TA 都要簽，每月一張。表單上印的是 196 元，RA 請自行改成 200 元。"],
-  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張，原則上每月 15 號繳交。填好後可以先用「簽到單送出前檢查」檢查。"],
+  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA、TA 都要簽，每月一張。表單上印的是 196 元，RA 請自行改成 200 元。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
+  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張，原則上每月 15 號繳交。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
   ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
   ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
   ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
@@ -186,6 +187,7 @@ async function addFiles(fileList) {
     const item = { id: ++seq, fileName: file.name, role: pickedRole, insuredFrom: "", plannedHours: "", foreign: false };
     try {
       item.bytes = await file.arrayBuffer();
+      if (isReceipt(item.bytes.slice(0))) { item.receipt = parseReceipt(item.bytes.slice(0)); sheets.push(item); continue; }
       item.sheet = await parseTimesheet(item.bytes.slice(0));
       item.isDocx = /\.docx$/i.test(file.name);
       item.foreign = item.sheet.foreign;
@@ -244,7 +246,60 @@ function insuranceDue(entries) {
 
 function rowsLabel(ids) { return ids?.length ? `第 ${ids.join("、")} 列：` : ""; }
 
+// 個人領據（附件 6-2）：列出問題，並把讀到的內容排成表給學生對照
+function renderReceipt(item) {
+  const r = item.receipt;
+  const sheetsRead = sheets.filter((s) => s.sheet).map((s) => ({ role: s.role, sheet: s.sheet, hours: checkInnovation(s.sheet, s).calculated.totalHours }));
+  const res = checkReceipt(r, { role: item.role, sheets: sheetsRead });
+  const who = [r.name, r.studentId].filter(Boolean).map(esc).join("　") || "（姓名、學號未填）";
+  const issues = res.issues.map((i, n) => ({ ...i, number: n + 1 }));
+  // 領據重畫成表單的樣子，有問題的格子加紅框（要修正）或黃框（請確認）＋編號
+  const box = (f, v, cls = "") => {
+    const hit = issues.filter((i) => i.fields.includes(f));
+    const sev = hit.some((i) => i.severity === "error") ? "error" : "review";
+    const mark = hit.length ? ` annotation-target" data-annotation-number="${hit[0].number}" data-severity="${sev}` : "";
+    const badges = hit.map((i, k) => `<span class="annotation-badge" data-annotation-number="${i.number}" data-severity="${i.severity}" style="--annotation-slot:${k}" aria-hidden="true">${i.number}</span>`).join("");
+    return `<span class="rc-f ${cls}${mark}">${esc(v) || "&nbsp;"}${badges}</span>`;
+  };
+  const cell = (f, v) => {
+    const hit = issues.filter((i) => i.fields.includes(f));
+    const sev = hit.some((i) => i.severity === "error") ? "error" : "review";
+    const badges = hit.map((i, k) => `<span class="annotation-badge" data-annotation-number="${i.number}" data-severity="${i.severity}" style="--annotation-slot:${k}" aria-hidden="true">${i.number}</span>`).join("");
+    return `<td${hit.length ? ` class="annotation-target" data-annotation-number="${hit[0].number}" data-severity="${sev}"` : ""}>${esc(v)}${badges}</td>`;
+  };
+  return `<div class="panel sheet">
+    <div class="sheet-head">
+      <h3>${who}<span class="fmt">個人領據（附件 6-2）・${esc(item.fileName)}</span></h3>
+      <button class="remove" data-remove="${item.id}">移除</button>
+    </div>
+    <div class="opts-row">
+      <span>身分（選錯可以在這裡改）</span>
+      <span class="seg" role="group" aria-label="身分">
+        ${Object.entries(ROLES).map(([k, v]) => `<button data-role="${k}" data-id="${item.id}" aria-pressed="${item.role === k}">${v.label}（${v.rate} 元）</button>`).join("")}
+      </span>
+    </div>
+    <div class="stats">
+      <span>${r.month ? `${r.year || 115} 年 ${r.month} 月` : "月份未填"}</span>
+      <span>時數 <b>${r.hours || "—"}</b> 小時</span>
+      <span>金額 <b>${r.amount ? r.amount.toLocaleString("en-US") : "—"}</b> 元</span>
+    </div>
+    <ul class="issues">${issues.map((i) => `<li><button class="num" data-sev="${i.severity}" data-focus="${item.id}:${i.number}" title="在領據上找到這一處">${i.number}</button><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${esc(i.message)}</span></li>`).join("")}</ul>
+    <figure class="doc-fig"><figcaption>領據上有編號框線的地方，就是要改或要確認的位置</figcaption><div class="doc-view" id="doc-${item.id}"><div class="paper receipt-paper">
+      <h4>中原大學高教深耕計畫支付個人款項領款收據</h4>
+      <table>
+        <tr><th>領款名稱</th><td colspan="4">數位創新應用-研究助理助學金115年${box("month", r.month || "", "rc-blank")}月<br>(${box("rate", r.rate || "", "rc-blank")}元X ${box("hours", r.hours || "", "rc-blank")}小時= ${box("amount", r.amount || "", "rc-blank")}元)</td></tr>
+        <tr><th>活動地點</th>${cell("place", r.place).replace("<td", '<td colspan="4"')}</tr>
+        <tr><th>金額</th><td colspan="3">新台幣 ${box("words", (r.amountWords || "").replace(/^新[台臺]幣/, "").replace(/(元整|元|整)+$/, ""), "rc-wide")} 元整（大寫）</td><td>款付：${box("payee", r.payee, "rc-blank")}</td></tr>
+        <tr><th rowspan="2">具領人</th><th>單位</th><th>職稱</th><th>姓名（正楷）</th><th>蓋章或簽名</th></tr>
+        <tr>${cell("unit", r.unit)}${cell("title", r.title)}${cell("name", r.name)}${cell("sign", "")}</tr>
+        <tr><th>人事代碼或學號</th>${cell("studentId", r.studentId).replace("<td", '<td colspan="4"')}</tr>
+      </table>
+    </div></div></figure>
+  </div>`;
+}
+
 function renderSheet(item) {
+  if (item.receipt) return renderReceipt(item);
   if (item.error) {
     return `<div class="panel sheet"><div class="sheet-head"><h3>${esc(item.fileName)}</h3><button class="remove" data-remove="${item.id}">移除</button></div><div class="note"><b>無法檢查：</b>${esc(item.error)}</div></div>`;
   }
@@ -298,7 +353,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261001v").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261001v")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002a").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002a")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
@@ -359,7 +414,7 @@ document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("clic
   pickedRole = b.dataset.pick;
   document.querySelectorAll("[data-pick]").forEach((x) => x.setAttribute("aria-pressed", x === b));
   drop.setAttribute("aria-disabled", "false");
-  $("#drop-title").textContent = `第二步：上傳${ROLES[pickedRole].label}的簽到單（點這裡選檔，或把檔案拖進來）`;
+  $("#drop-title").textContent = `第二步：上傳${ROLES[pickedRole].label}的簽到單、個人領據（點這裡選檔，或把檔案拖進來）`;
 }));
 input.addEventListener("change", () => { addFiles([...input.files]); input.value = ""; });
 drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });

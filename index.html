@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261001v">
+<link rel="stylesheet" href="styles.css?v=20261002a">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -37,7 +37,7 @@
     <a class="card" href="#receipt"><span class="q">付完錢，收據要長怎樣？</span><span class="s">ChatGPT、Gemini 等線上平台，以及發票、收據的規則。</span><span class="go">看範例 →</span></a>
     <a class="card" href="#submit"><span class="q">報帳要附什麼？用途怎麼寫？</span><span class="s">支出明細表（08）怎麼填、用途說明的正確寫法。</span><span class="go">看寫法 →</span></a>
     <a class="card" href="#event"><span class="q">我要辦演講，講員費和餐費怎麼報？</span><span class="s">講員要附哪些文件、餐費的限制，以及兩樣要分開送。</span><span class="go">看規定 →</span></a>
-    <a class="card" href="#check"><span class="q">簽到單送出前檢查</span><span class="s">給擔任 RA、TA 的同學使用：上傳自己的簽到單電子檔，自動找出算錯、漏填的地方。</span><span class="go">上傳檢查 →</span></a>
+    <a class="card" href="#check"><span class="q">簽到單、領據送出前檢查</span><span class="s">給擔任 RA、TA 的同學使用：上傳自己的簽到單和個人領據電子檔，自動找出算錯、漏填的地方。</span><span class="go">上傳檢查 →</span></a>
     <a class="card" href="#files"><span class="q">附件下載</span><span class="s">合意書、投保資訊表、簽到單、支出明細表等所有表單。</span><span class="go">下載表單 →</span></a>
   </nav>
 
@@ -304,9 +304,9 @@
 <section id="v-check" class="stack" hidden>
   <button class="back" data-home>← 回總覽</button>
   <header class="stack" style="gap:6px">
-    <div class="eyebrow">簽到單送出前檢查</div>
-    <h2>上傳簽到單，先幫你找錯</h2>
-    <p class="lede">給擔任 RA、TA 的同學使用。先選自己的身分，再上傳簽到單。10、11、12 月的簽到單可以一起上傳，會幫你加總三個月的時數。<br><b>網頁只能幫忙抓常見錯誤，不代表一定正確，送出前請自己再仔細看一次。</b></p>
+    <div class="eyebrow">簽到單、領據送出前檢查</div>
+    <h2>上傳簽到單和領據，先幫你找錯</h2>
+    <p class="lede">給擔任 RA、TA 的同學使用。先選自己的身分，再上傳簽到單和個人領據。10、11、12 月的簽到單可以一起上傳，會幫你加總三個月的時數；同一個月的簽到單和領據一起上傳，會幫你核對兩邊時數一不一樣。<br><b>網頁只能幫忙抓常見錯誤，不代表一定正確，送出前請自己再仔細看一次。</b></p>
   </header>
 
   <div class="panel stack" style="gap:10px">
@@ -320,7 +320,7 @@
 
   <label class="drop" id="drop" for="file-input" aria-disabled="true">
     <span class="big" id="drop-title">請先選擇上面的身分</span>
-    <span class="privacy">支援 .docx、.odt 電子檔（附件 6-3 臨時工資簽到單）。舊版 .doc、PDF、照片沒辦法自動檢查。</span>
+    <span class="privacy">支援 .docx、.odt 電子檔（附件 6-3 臨時工資簽到單、附件 6-2 個人領據）。舊版 .doc、PDF、照片沒辦法自動檢查。</span>
     <input id="file-input" type="file" accept=".docx,.odt" multiple hidden>
   </label>
   <p class="privacy">檔案只在你的瀏覽器裡讀取，不會上傳到任何地方。</p>
@@ -345,6 +345,7 @@
       <li>TA：提醒投保資料要在第一天工作前 7 天送到數位處、跟投保資訊表填的時數一不一樣、外籍生每週是否超過 20 小時</li>
       <li>總時數：TA 三個月合計不超過 30 小時、RA 不超過 50 小時（同一人的多張簽到單會自動加總）</li>
       <li>同一位學生有沒有同時是 RA 和 TA</li>
+      <li>個人領據：月份、時數、時薪（RA 要改成 200 元）、金額算得對不對，大寫金額有沒有寫對，單位、職稱、姓名、學號有沒有填，活動地點有沒有寫工作教室、款付有沒有寫「本人」，時數跟同月簽到單一不一樣</li>
     </ul>
   </div>
 </section>
@@ -361,6 +362,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20261001v"></script>
+<script type="module" src="js/app.js?v=20261002a"></script>
 </body>
 </html>
