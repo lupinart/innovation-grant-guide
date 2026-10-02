@@ -1,7 +1,7 @@
 // 個人領據（附件 6-2 支付個人款項領款收據）的解析與檢查
-import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20261002a";
-import { ROLES, PERIOD_MONTHS, PROFILE } from "./check.js?v=20261002a";
-import { checkTimesheet } from "./rules.js?v=20261002a";
+import { strFromU8, unzipSync } from "./vendor/fflate.js?v=20261002b";
+import { ROLES, PERIOD_MONTHS, PROFILE } from "./check.js?v=20261002b";
+import { checkTimesheet } from "./rules.js?v=20261002b";
 
 function decodeXml(value) {
   return value
@@ -187,7 +187,7 @@ export function checkReceipt(r, options = {}) {
     }
     if (match.some((s) => s.role !== role)) out.push(issue("ROLE_MISMATCH", "error", "領據和簽到單選的身分（RA／TA）不一樣，請確認。"));
   } else if (r.month) {
-    out.push(issue("NO_SHEET", "review", `把同一個人 ${r.month} 月的簽到單一起上傳，可以幫你核對兩邊的時數一不一樣。`));
+    out.push(issue("NO_SHEET", "hint", `小提醒：把 ${r.month} 月的簽到單也一起上傳，網頁會幫你比對領據和簽到單的時數有沒有一樣。`));
   }
 
   out.push(issue("SIGN", "review", "列印後，「蓋章或簽名」欄要本人親筆簽名或蓋章（Word 裡打字的不算）。"));
@@ -203,7 +203,9 @@ export function checkReceipt(r, options = {}) {
     PERSON_MISSING: missing.map((k) => FIELD[k]), PERSON_UNREAD: Object.values(FIELD), SIGN: ["sign"]
   };
   for (const i of out) i.fields = AT[i.code] ?? (i.code.startsWith("PLACE_") ? ["place"] : []);
-  return { role, rate, issues: [...out.filter((i) => i.severity === "error"), ...out.filter((i) => i.severity !== "error")] };
+  const hints = out.filter((i) => i.severity === "hint").map((i) => i.message);
+  const rest = out.filter((i) => i.severity !== "hint");
+  return { role, rate, hints, issues: [...rest.filter((i) => i.severity === "error"), ...rest.filter((i) => i.severity !== "error")] };
 }
 
 // 數字 → 大寫金額（給錯誤訊息示範寫法）

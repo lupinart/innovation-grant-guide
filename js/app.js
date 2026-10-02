@@ -1,7 +1,7 @@
-import { parseTimesheet } from "./parse.js?v=20261002a";
-import { checkInnovation, ROLES } from "./check.js?v=20261002a";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002a";
-import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002a";
+import { parseTimesheet } from "./parse.js?v=20261002b";
+import { checkInnovation, ROLES } from "./check.js?v=20261002b";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002b";
+import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002b";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -283,6 +283,7 @@ function renderReceipt(item) {
       <span>時數 <b>${r.hours || "—"}</b> 小時</span>
       <span>金額 <b>${r.amount ? r.amount.toLocaleString("en-US") : "—"}</b> 元</span>
     </div>
+    ${res.hints.map((h) => `<p class="privacy">${esc(h)}</p>`).join("")}
     <ul class="issues">${issues.map((i) => `<li><button class="num" data-sev="${i.severity}" data-focus="${item.id}:${i.number}" title="在領據上找到這一處">${i.number}</button><span class="pill ${i.severity === "error" ? "no" : "warn"}">${LABEL[i.severity]}</span><span>${esc(i.message)}</span></li>`).join("")}</ul>
     <figure class="doc-fig"><figcaption>領據上有編號框線的地方，就是要改或要確認的位置</figcaption><div class="doc-view" id="doc-${item.id}"><div class="paper receipt-paper">
       <h4>中原大學高教深耕計畫支付個人款項領款收據</h4>
@@ -353,7 +354,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002a").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002a")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002b").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002b")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
