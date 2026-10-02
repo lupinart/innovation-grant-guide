@@ -1,7 +1,7 @@
-import { parseTimesheet } from "./parse.js?v=20261002c";
-import { checkInnovation, ROLES } from "./check.js?v=20261002c";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002c";
-import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002c";
+import { parseTimesheet } from "./parse.js?v=20261002d";
+import { checkInnovation, ROLES } from "./check.js?v=20261002d";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002d";
+import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002d";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -150,7 +150,7 @@ const FILES = [
   ["05-ra-agreement.odt", "附件5_研究獎助生合意書.odt", "附件 5　研究獎助生合意書", "RA 用。一式三份、學生與老師親簽，紙本送 101A。"],
   ["06-1-reimbursement-rules.odt", "附件6-1_核銷注意要點.odt", "附件 6-1　核銷注意要點", "可報項目、應附文件、憑證規格的完整規定。"],
   ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA、TA 都要簽，每月一張。表單上印的是 196 元，RA 請自行改成 200 元。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
-  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張，原則上每月 15 號繳交。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
+  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
   ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
   ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
   ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
@@ -354,7 +354,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002c").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002c")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002d").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002d")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {
