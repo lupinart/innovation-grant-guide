@@ -1,7 +1,7 @@
-import { parseTimesheet } from "./parse.js?v=20261002d";
-import { checkInnovation, ROLES } from "./check.js?v=20261002d";
-import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002d";
-import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002d";
+import { parseTimesheet } from "./parse.js?v=20261002e";
+import { checkInnovation, ROLES } from "./check.js?v=20261002e";
+import { annotateRenderedDocx, buildAnnotations } from "./annotations.js?v=20261002e";
+import { isReceipt, parseReceipt, checkReceipt } from "./receipt.js?v=20261002e";
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -98,9 +98,9 @@ const ITEMS = [
   ["腳架、手機支架", "ok", "電腦周邊"],
   ["記憶卡", "ok", "電腦周邊"],
   ["筆、影印紙、迴紋針等文具", "ok", "教學相關才可以，不能私人用"],
-  ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用；下載 Receipt，要寫中原大學；附刷卡明細與刷卡當天匯率表"],
-  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用；要有 Invoice 或 Receipt，上面要有中原大學和統編；附刷卡明細與刷卡當天匯率表"],
-  ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用"],
+  ["ChatGPT 訂閱", "warn", "只能報 9–12 月的費用，一定要寫使用期間；下載 Receipt，要寫中原大學；附刷卡明細與刷卡當天匯率表"],
+  ["Gemini 訂閱", "warn", "只能報 9–12 月的費用，一定要寫使用期間；要有 Invoice 或 Receipt，上面要有中原大學和統編；附刷卡明細與刷卡當天匯率表"],
+  ["教學軟體授權", "warn", "與課程教學相關，只能報執行月份的費用，一定要寫使用期間"],
   ["印刷、影印、大圖輸出", "warn", "收據一定要寫數量和單價（例：影印 200 張 × 1 元）；1,000 元以上（大圖 2,000 元以上）要附 2～3 頁樣張"],
   ["海報、文宣、網站設計", "warn", "要附設計樣本"],
   ["碳粉匣", "warn", "原則上買一個，這項不受 2,999 元限制"],
@@ -149,8 +149,8 @@ const FILES = [
   ["04-budget-change.odt", "附件4_經費變更申請表.odt", "附件 4　經費變更申請表", "經費項目需要調整時填寫。"],
   ["05-ra-agreement.odt", "附件5_研究獎助生合意書.odt", "附件 5　研究獎助生合意書", "RA 用。一式三份、學生與老師親簽，紙本送 101A。"],
   ["06-1-reimbursement-rules.odt", "附件6-1_核銷注意要點.odt", "附件 6-1　核銷注意要點", "可報項目、應附文件、憑證規格的完整規定。"],
-  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA、TA 都要簽，每月一張。表單上印的是 196 元，RA 請自行改成 200 元。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
-  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
+  ["06-2-personal-receipt.odt", "附件6-2_支付個人款項領款收據.odt", "附件 6-2　個人領款收據", "RA、TA 都要簽，每月一張。表單上印的是 196 元，RA 請自行改成 200 元。最上面的日期要寫月份，幾號先空著。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
+  ["06-3-timesheet.odt", "附件6-3_臨時工資簽到單.odt", "附件 6-3　臨時工資簽到單", "RA、TA 都要填，每月一張，原則上每月 15 號繳交。填好後可以先用「簽到單、領據送出前檢查」檢查。"],
   ["06-4-activity-record.odt", "附件6-4_數位教學相關活動紀錄.odt", "附件 6-4　活動紀錄", "辦理演講、工作坊等活動時附上。"],
   ["06-5-competition-award.odt", "附件6-5_競賽獎助推薦表.odt", "附件 6-5　競賽獎助推薦表", "核銷學生參賽獎勵金時附上。"],
   ["07-outcome-report.odt", "附件7_成效報告及案例.odt", "附件 7　成效報告及案例", "116/1/20 前繳交。"],
@@ -354,7 +354,7 @@ function loadScript(src) {
   return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.append(s); });
 }
 function docxPreview() {
-  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002d").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002d")).then(() => window.docx);
+  previewLib ??= loadScript("js/vendor/jszip.min.js?v=20261002e").then(() => loadScript("js/vendor/docx-preview.min.js?v=20261002e")).then(() => window.docx);
   return previewLib;
 }
 function fallbackPaper(s) {

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261002d">
+<link rel="stylesheet" href="styles.css?v=20261002e">
 <script>
   // 先套用記住的主題，避免畫面閃一下
   try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -73,8 +73,8 @@
         <dt>投保</dt><dd>由人事室統一辦理</dd>
         <dt>要交的文件</dt><dd>「研究獎助生合意書」（附件 5）<b>一式三份、學生與老師親簽</b>，紙本送 101A</dd>
         <dt>時數</dt><dd>總共 <b>50 小時</b>，分 10、11、12 月三個月做完（合計 10,000 元）</dd>
-        <dt>怎麼核銷</dt><dd>按月核銷，附個人領據（附件 6-2）與簽到單（附件 6-3）。領據上印的是 196 元，<b>請自行改成 200 元</b></dd>
-        <dt>每月</dt><dd>填「臨時工資簽到單」（附件 6-3），時間記到分鐘</dd>
+        <dt>怎麼核銷</dt><dd>按月核銷，附個人領據（附件 6-2）與簽到單（附件 6-3）。領據上印的是 196 元，<b>請自行改成 200 元</b>。領據最上面的日期<b>要寫月份，幾號先空著</b></dd>
+        <dt>每月</dt><dd>填「臨時工資簽到單」（附件 6-3），時間記到分鐘，原則上<b>每月 15 號</b>繳交</dd>
       </dl>
     </div>
     <div class="panel who">
@@ -85,8 +85,8 @@
         <dt>做什麼</dt><dd>協助教師支援教學與研究相關作業</dd>
         <dt>時數</dt><dd>10–12 月<b>合計 30 小時</b>（5,880 元），每月不超過 30 小時，照當初填的工作時間分配（例如每月 10 小時）；外籍生每週最多 20 小時</dd>
         <dt>要交的文件</dt><dd>「工讀學生聘任投保資訊」（附件 3），寫清楚 10、11、12 月各月的<b>工作日期與時數</b>。外籍生要附工作證</dd>
-        <dt>怎麼核銷</dt><dd>按月核銷，附個人領據（附件 6-2）與簽到單（附件 6-3）</dd>
-        <dt>每月</dt><dd>填「臨時工資簽到單」（附件 6-3），時間記到分鐘</dd>
+        <dt>怎麼核銷</dt><dd>按月核銷，附個人領據（附件 6-2）與簽到單（附件 6-3）。領據最上面的日期<b>要寫月份，幾號先空著</b></dd>
+        <dt>每月</dt><dd>填「臨時工資簽到單」（附件 6-3），時間記到分鐘，原則上<b>每月 15 號</b>繳交</dd>
       </dl>
     </div>
   </div>
@@ -142,7 +142,7 @@
   <header class="stack" style="gap:6px">
     <div class="eyebrow">付完錢，收據要長怎樣？</div>
     <h2>線上平台：下載「收據」，不是「帳單」</h2>
-    <p class="lede">平台如果同時有 Invoice 跟 Receipt，請下載 <b>Receipt（收據）</b>。Invoice 不能拿來核銷。軟體費只能報計畫執行月份（9–12 月）的費用。</p>
+    <p class="lede">平台如果同時有 Invoice 跟 Receipt，請下載 <b>Receipt（收據）</b>。Invoice 不能拿來核銷。軟體費只能報計畫執行月份（9–12 月）的費用，而且<b>一定要寫使用期間</b>（例如：ChatGPT 軟體 9/30–10/30）。</p>
   </header>
 
   <div class="note"><b>很重要：每一張發票、收據都一定要寫「數量」和「單價」。</b>影印也一樣，要寫印了幾張、每張多少錢（例如：影印 200 張 × 單價 1 元）。</div>
@@ -233,6 +233,7 @@
   <ol class="steps panel">
     <li><span><b>發票或收據正本</b>（規格見「付完錢，收據要長怎樣？」）</span></li>
     <li><span><b>支出明細表（08）</b>：每一筆都要附。寫清楚付給誰、金額，以及<b>至少 50 字</b>的教學用途說明，老師簽名。<a class="step-dl" href="files/08-expense-detail.doc" download="08_支出明細表.doc">下載支出明細表（08）</a></span></li>
+    <li><span>軟體費用：品名<b>一定要加上使用期間</b>，例如「ChatGPT 軟體（9/30–10/30）」。</span></li>
     <li><span>買電腦周邊或文具時，用途要說明它<b>跟這門課的教學內容怎麼相關</b>。</span></li>
     <li><span>用信用卡付款：附上<b>刷卡明細</b>；外幣付款再附<b>刷卡當天的匯率表</b>。</span></li>
   </ol>
@@ -365,6 +366,6 @@
 </section>
 
 </div>
-<script type="module" src="js/app.js?v=20261002d"></script>
+<script type="module" src="js/app.js?v=20261002e"></script>
 </body>
 </html>
